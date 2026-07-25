@@ -1,0 +1,49 @@
+name: FoodSpot
+options:
+  bundleIdPrefix: com.foodspot
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+configFiles:
+  Debug: Config/Secrets.xcconfig
+  Release: Config/Secrets.xcconfig
+
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: "2.0.0"
+
+targets:
+  FoodSpot:
+    type: application
+    platform: iOS
+    sources:
+      - path: FoodSpot
+        excludes:
+          - "**/.DS_Store"
+          - "Resources/Info.plist"
+          - "FoodSpot.entitlements"
+    info:
+      path: FoodSpot/Resources/Info.plist
+      properties:
+        UILaunchScreen: {}
+        NSLocationWhenInUseUsageDescription: "FoodSpot benötigt deinen Standort, um Restaurants in deiner Nähe zu finden."
+        SUPABASE_URL: $(SUPABASE_URL)
+        SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+    entitlements:
+      path: FoodSpot/FoodSpot.entitlements
+      properties:
+        com.apple.developer.applesignin:
+          - Default
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.foodspot.app
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - package: Supabase

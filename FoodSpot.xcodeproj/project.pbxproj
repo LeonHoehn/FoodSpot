@@ -1,0 +1,421 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		427E289054AB357B4F5AC666 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04418F5D3573E0F85DCC0D01 /* ContentView.swift */; };
+		45400A55AEE326A9A00976FE /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AEE08CB3907546E22E677F /* Dish.swift */; };
+		5D850FF5C913F52B2A52F6FC /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 7F2DE351160F04152FF87F51 /* Supabase */; };
+		6FDD1779B3FA4BB6C48480CD /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5E18B6F2EE644786298D51 /* AuthViewModel.swift */; };
+		82046945E5E2F4B298B044DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */; };
+		996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */; };
+		9CAD56DE268D3E133FFDEDB2 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D6926D49DF2EF9B1022016 /* Restaurant.swift */; };
+		BB6F8A1520501751990C283E /* Rating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F76869786188C43BD36BF90 /* Rating.swift */; };
+		C92E932231FA04D76CCA2817 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */; };
+		D18E5976F280619B2FB485AB /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62883C028D1E26FC2C8F4E47 /* SignInView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		04418F5D3573E0F85DCC0D01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSpotApp.swift; sourceTree = "<group>"; };
+		3A5E18B6F2EE644786298D51 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4755407744E4B83D360622CD /* FoodSpot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FoodSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F76869786188C43BD36BF90 /* Rating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rating.swift; sourceTree = "<group>"; };
+		62883C028D1E26FC2C8F4E47 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
+		8810A4B781D64ED0557C66CE /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		98AEE08CB3907546E22E677F /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
+		F7D6926D49DF2EF9B1022016 /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7C93F5A0ED3FE4526A3CFB6D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D850FF5C913F52B2A52F6FC /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2F9AA0DDAE07E36B0A47EC61 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				04418F5D3573E0F85DCC0D01 /* ContentView.swift */,
+				35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		65BE3C544556360CF982286A /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		6862D59F8E25882C86D925F1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				98AEE08CB3907546E22E677F /* Dish.swift */,
+				5F76869786188C43BD36BF90 /* Rating.swift */,
+				F7D6926D49DF2EF9B1022016 /* Restaurant.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		705FF28FD4362EA24AAF626A /* FoodSpot */ = {
+			isa = PBXGroup;
+			children = (
+				2F9AA0DDAE07E36B0A47EC61 /* App */,
+				B2F6A79ED9BC6978EEFA4F2C /* Auth */,
+				65BE3C544556360CF982286A /* Core */,
+				6862D59F8E25882C86D925F1 /* Models */,
+				ADE241FA06CAB52D4BF86C2D /* Resources */,
+			);
+			path = FoodSpot;
+			sourceTree = "<group>";
+		};
+		8543B8BAD830F1AA621A71D7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4755407744E4B83D360622CD /* FoodSpot.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ADE241FA06CAB52D4BF86C2D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B2F6A79ED9BC6978EEFA4F2C /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				3A5E18B6F2EE644786298D51 /* AuthViewModel.swift */,
+				62883C028D1E26FC2C8F4E47 /* SignInView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		BC2067AF1C7B2B044FC95FBC = {
+			isa = PBXGroup;
+			children = (
+				E13000A495D271A9B86D6FF3 /* Config */,
+				705FF28FD4362EA24AAF626A /* FoodSpot */,
+				8543B8BAD830F1AA621A71D7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E13000A495D271A9B86D6FF3 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				8810A4B781D64ED0557C66CE /* Secrets.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A9D7CAAF795D54BC2E51820A /* FoodSpot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E5FBC968B7281817E03FDD7C /* Build configuration list for PBXNativeTarget "FoodSpot" */;
+			buildPhases = (
+				7609B6F05840C6EBD7D58816 /* Sources */,
+				C2B7037EF69A53951D05D0EE /* Resources */,
+				7C93F5A0ED3FE4526A3CFB6D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FoodSpot;
+			packageProductDependencies = (
+				7F2DE351160F04152FF87F51 /* Supabase */,
+			);
+			productName = FoodSpot;
+			productReference = 4755407744E4B83D360622CD /* FoodSpot.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3F624450B47F3D8267AE2248 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 636CD5E90F5C4A0E5A934E43 /* Build configuration list for PBXProject "FoodSpot" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BC2067AF1C7B2B044FC95FBC;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				548DADED0076F420447F080F /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8543B8BAD830F1AA621A71D7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A9D7CAAF795D54BC2E51820A /* FoodSpot */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C2B7037EF69A53951D05D0EE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82046945E5E2F4B298B044DD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7609B6F05840C6EBD7D58816 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FDD1779B3FA4BB6C48480CD /* AuthViewModel.swift in Sources */,
+				427E289054AB357B4F5AC666 /* ContentView.swift in Sources */,
+				45400A55AEE326A9A00976FE /* Dish.swift in Sources */,
+				996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */,
+				BB6F8A1520501751990C283E /* Rating.swift in Sources */,
+				9CAD56DE268D3E133FFDEDB2 /* Restaurant.swift in Sources */,
+				D18E5976F280619B2FB485AB /* SignInView.swift in Sources */,
+				C92E932231FA04D76CCA2817 /* SupabaseManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2D44E536AD32A51E3D4E3CFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8810A4B781D64ED0557C66CE /* Secrets.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		30D781D837A69547187DD7EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8810A4B781D64ED0557C66CE /* Secrets.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6819C0C341C21AFF08AF2A83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FoodSpot/FoodSpot.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = FoodSpot/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.foodspot.app;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8FF86840FD4EC6344DC0BFAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FoodSpot/FoodSpot.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = FoodSpot/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.foodspot.app;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		636CD5E90F5C4A0E5A934E43 /* Build configuration list for PBXProject "FoodSpot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30D781D837A69547187DD7EC /* Debug */,
+				2D44E536AD32A51E3D4E3CFB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E5FBC968B7281817E03FDD7C /* Build configuration list for PBXNativeTarget "FoodSpot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6819C0C341C21AFF08AF2A83 /* Debug */,
+				8FF86840FD4EC6344DC0BFAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		548DADED0076F420447F080F /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7F2DE351160F04152FF87F51 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 548DADED0076F420447F080F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 3F624450B47F3D8267AE2248 /* Project object */;
+}
