@@ -5,34 +5,28 @@ struct ContentView: View {
 
     var body: some View {
         if authViewModel.isSignedIn {
-            SignedInPlaceholderView()
+            HomeView()
         } else {
             SignInView()
         }
     }
 }
 
-/// Platzhalter bis Phase 3 (Kartenansicht) umgesetzt ist.
-private struct SignedInPlaceholderView: View {
+private struct HomeView: View {
     @EnvironmentObject private var authViewModel: AuthViewModel
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.green)
-                Text("Angemeldet")
-                    .font(.title2.bold())
-                Text("Die Kartenansicht folgt in Phase 3.")
-                    .foregroundStyle(.secondary)
-
-                Button("Abmelden", role: .destructive) {
-                    Task { await authViewModel.signOut() }
+            MapView()
+                .navigationTitle("FoodSpot")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Abmelden", role: .destructive) {
+                            Task { await authViewModel.signOut() }
+                        }
+                    }
                 }
-                .padding(.top, 24)
-            }
-            .navigationTitle("FoodSpot")
         }
     }
 }

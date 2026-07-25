@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		235E28C26D8BB74A8DABF898 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68B099F9968F98A93654EBD /* LocationManager.swift */; };
 		427E289054AB357B4F5AC666 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04418F5D3573E0F85DCC0D01 /* ContentView.swift */; };
 		45400A55AEE326A9A00976FE /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AEE08CB3907546E22E677F /* Dish.swift */; };
 		5D850FF5C913F52B2A52F6FC /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 7F2DE351160F04152FF87F51 /* Supabase */; };
@@ -14,13 +15,17 @@
 		82046945E5E2F4B298B044DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */; };
 		996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */; };
 		9CAD56DE268D3E133FFDEDB2 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D6926D49DF2EF9B1022016 /* Restaurant.swift */; };
+		B8ECA48FF282E68102C85C65 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E69BB1B74FCA01B9323F99 /* MapViewModel.swift */; };
+		B9466339793E7FF3FA655BA2 /* RestaurantRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124DE9A4B5B90A2B51694FD8 /* RestaurantRepository.swift */; };
 		BB6F8A1520501751990C283E /* Rating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F76869786188C43BD36BF90 /* Rating.swift */; };
 		C92E932231FA04D76CCA2817 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */; };
 		D18E5976F280619B2FB485AB /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62883C028D1E26FC2C8F4E47 /* SignInView.swift */; };
+		DF336609A40E744433E64179 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D91768F80CD6515B210D71 /* MapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		04418F5D3573E0F85DCC0D01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		124DE9A4B5B90A2B51694FD8 /* RestaurantRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantRepository.swift; sourceTree = "<group>"; };
 		35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSpotApp.swift; sourceTree = "<group>"; };
 		3A5E18B6F2EE644786298D51 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -30,6 +35,9 @@
 		8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		8810A4B781D64ED0557C66CE /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		98AEE08CB3907546E22E677F /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
+		98D91768F80CD6515B210D71 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		B68B099F9968F98A93654EBD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		E9E69BB1B74FCA01B9323F99 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		F7D6926D49DF2EF9B1022016 /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,6 +65,8 @@
 		65BE3C544556360CF982286A /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B68B099F9968F98A93654EBD /* LocationManager.swift */,
+				124DE9A4B5B90A2B51694FD8 /* RestaurantRepository.swift */,
 				8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */,
 			);
 			path = Core;
@@ -78,6 +88,7 @@
 				2F9AA0DDAE07E36B0A47EC61 /* App */,
 				B2F6A79ED9BC6978EEFA4F2C /* Auth */,
 				65BE3C544556360CF982286A /* Core */,
+				90BE19A98D868EC13AAB6184 /* Map */,
 				6862D59F8E25882C86D925F1 /* Models */,
 				ADE241FA06CAB52D4BF86C2D /* Resources */,
 			);
@@ -90,6 +101,15 @@
 				4755407744E4B83D360622CD /* FoodSpot.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		90BE19A98D868EC13AAB6184 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				98D91768F80CD6515B210D71 /* MapView.swift */,
+				E9E69BB1B74FCA01B9323F99 /* MapViewModel.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 		ADE241FA06CAB52D4BF86C2D /* Resources */ = {
@@ -202,8 +222,12 @@
 				427E289054AB357B4F5AC666 /* ContentView.swift in Sources */,
 				45400A55AEE326A9A00976FE /* Dish.swift in Sources */,
 				996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */,
+				235E28C26D8BB74A8DABF898 /* LocationManager.swift in Sources */,
+				DF336609A40E744433E64179 /* MapView.swift in Sources */,
+				B8ECA48FF282E68102C85C65 /* MapViewModel.swift in Sources */,
 				BB6F8A1520501751990C283E /* Rating.swift in Sources */,
 				9CAD56DE268D3E133FFDEDB2 /* Restaurant.swift in Sources */,
+				B9466339793E7FF3FA655BA2 /* RestaurantRepository.swift in Sources */,
 				D18E5976F280619B2FB485AB /* SignInView.swift in Sources */,
 				C92E932231FA04D76CCA2817 /* SupabaseManager.swift in Sources */,
 			);
@@ -258,7 +282,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -321,7 +345,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

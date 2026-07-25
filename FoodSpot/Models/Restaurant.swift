@@ -1,3 +1,4 @@
+import CoreLocation
 import Foundation
 
 struct Restaurant: Codable, Identifiable, Hashable {
@@ -15,5 +16,11 @@ struct Restaurant: Codable, Identifiable, Hashable {
         case lat
         case lng
         case address
+    }
+}
+
+extension Restaurant {
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
 }
