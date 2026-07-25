@@ -4,6 +4,6 @@
 DerivedData/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
-*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 Config/Secrets.xcconfig
 .env
+supabase/.temp/
