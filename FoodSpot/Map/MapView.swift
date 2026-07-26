@@ -54,7 +54,7 @@ struct MapView: View {
                 .presentationBackgroundInteraction(.enabled(upThrough: .medium))
                 .presentationBackground(
                     searchSheetDetent == .medium
-                        ? AnyShapeStyle(.ultraThinMaterial)
+                        ? AnyShapeStyle(Material.ultraThinMaterial.opacity(0.7))
                         : AnyShapeStyle(Color(.systemGroupedBackground))
                 )
         }

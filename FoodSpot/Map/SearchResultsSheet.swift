@@ -32,6 +32,7 @@ struct SearchResultsSheet: View {
             }
         }
         .scrollContentBackground(.hidden)
+        .listSectionSpacing(.compact)
         .onChange(of: viewModel.searchText) {
             performSearch()
         }
