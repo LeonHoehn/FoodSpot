@@ -14,7 +14,6 @@ struct ContentView: View {
 }
 
 private struct HomeView: View {
-    @EnvironmentObject private var authViewModel: AuthViewModel
     @StateObject private var mapViewModel = MapViewModel()
     @StateObject private var locationManager = LocationManager()
 
@@ -25,28 +24,35 @@ private struct HomeView: View {
     private static let radiusOptions: [Double] = [1, 2, 5, 10, 20]
 
     var body: some View {
-        NavigationStack {
-            MapView(viewModel: mapViewModel, locationManager: locationManager)
-                .navigationTitle("FoodSpot")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        radiusMenu
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Abmelden", role: .destructive) {
-                            Task { await authViewModel.signOut() }
+        TabView {
+            NavigationStack {
+                MapView(viewModel: mapViewModel, locationManager: locationManager)
+                    .navigationTitle("FoodSpot")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            radiusMenu
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                isShowingAddRestaurant = true
+                            } label: {
+                                Image(systemName: "plus")
+                            }
+                            .accessibilityLabel("Restaurant hinzufügen")
                         }
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isShowingAddRestaurant = true
-                        } label: {
-                            Image(systemName: "plus")
-                        }
-                        .accessibilityLabel("Restaurant hinzufügen")
-                    }
-                }
+            }
+            .tabItem {
+                Label("Karte", systemImage: "map")
+            }
+
+            NavigationStack {
+                ProfileView(locationManager: locationManager)
+            }
+            .tabItem {
+                Label("Profil", systemImage: "person.crop.circle")
+            }
         }
         .sheet(isPresented: $isShowingAddRestaurant) {
             AddRestaurantSearchView(locationManager: locationManager) { mapItem in

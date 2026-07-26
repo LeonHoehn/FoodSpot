@@ -109,6 +109,15 @@ struct RestaurantDetailSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Schließen") { dismiss() }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        Task { await viewModel.toggleBookmark() }
+                    } label: {
+                        Image(systemName: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
+                    }
+                    .disabled(viewModel.isTogglingBookmark)
+                    .accessibilityLabel(viewModel.isBookmarked ? "Aus Merkliste entfernen" : "Zur Merkliste hinzufügen")
+                }
             }
             .task { await viewModel.load() }
         }

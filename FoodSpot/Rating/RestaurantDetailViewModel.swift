@@ -9,7 +9,11 @@ final class RestaurantDetailViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
 
+    @Published private(set) var isBookmarked = false
+    @Published private(set) var isTogglingBookmark = false
+
     private let repository = RatingsSummaryRepository()
+    private let bookmarksRepository = BookmarksRepository()
 
     init(restaurant: RestaurantSummary) {
         self.restaurant = restaurant
@@ -23,8 +27,27 @@ final class RestaurantDetailViewModel: ObservableObject {
         do {
             async let averageTask = repository.fetchRestaurantAverage(restaurantId: restaurant.id)
             async let dishesTask = repository.fetchDishAverages(restaurantId: restaurant.id)
+            async let bookmarkTask = bookmarksRepository.isBookmarked(restaurantId: restaurant.id)
             restaurantAverage = try await averageTask
             dishAverages = try await dishesTask
+            isBookmarked = try await bookmarkTask
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func toggleBookmark() async {
+        isTogglingBookmark = true
+        defer { isTogglingBookmark = false }
+
+        do {
+            if isBookmarked {
+                try await bookmarksRepository.remove(restaurantId: restaurant.id)
+                isBookmarked = false
+            } else {
+                try await bookmarksRepository.add(restaurantId: restaurant.id)
+                isBookmarked = true
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -24,4 +24,15 @@ struct RatingsSummaryRepository {
             .execute()
             .value
     }
+
+    func fetchMyRatings() async throws -> [MyRatingRow] {
+        let userId = try await client.auth.session.user.id
+        return try await client
+            .from("ratings")
+            .select("id, dish_id, restaurant_id, taste, texture, appearance, smell, service, ambience, value, wait_time, dishes(name), restaurants(name, address, lat, lng)")
+            .eq("user_id", value: userId)
+            .order("created_at", ascending: false)
+            .execute()
+            .value
+    }
 }
