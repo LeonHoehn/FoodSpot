@@ -8,27 +8,28 @@ struct SearchResultsSheet: View {
     private static let radiusOptions: [Double] = [1, 2, 5, 10, 25, 50, 100]
 
     var body: some View {
-        VStack(spacing: 0) {
-            searchField
-                .padding(.horizontal)
-                .padding(.top, 12)
+        List {
+            Section {
+                searchField
+            }
 
-            Picker("Suchbereich", selection: $viewModel.searchScope) {
-                ForEach(SearchScope.allCases) { scope in
-                    Text(scope.rawValue).tag(scope)
+            Section {
+                Picker("Suchbereich", selection: $viewModel.searchScope) {
+                    ForEach(SearchScope.allCases) { scope in
+                        Text(scope.rawValue).tag(scope)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: viewModel.searchScope == .nearby ? 6 : 10, trailing: 16))
+
+                if viewModel.searchScope == .nearby {
+                    radiusControl
                 }
             }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.top, 12)
 
-            if viewModel.searchScope == .nearby {
-                radiusControl
-                    .padding(.horizontal)
-                    .padding(.top, 12)
+            Section {
+                resultsSectionContent
             }
-
-            resultsContent
         }
         .onChange(of: viewModel.searchText) {
             performSearch()
@@ -73,14 +74,13 @@ struct SearchResultsSheet: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(10)
-        .background(.quaternary, in: .rect(cornerRadius: 12))
     }
 
     private var radiusControl: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             Text("Umkreis: \(Int(viewModel.radiusKm)) km")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -99,16 +99,19 @@ struct SearchResultsSheet: View {
                 step: 1
             )
         }
+        .padding(.top, 4)
     }
 
     @ViewBuilder
-    private var resultsContent: some View {
+    private var resultsSectionContent: some View {
         if viewModel.isSearching {
-            Spacer()
-            ProgressView()
-            Spacer()
+            HStack {
+                Spacer()
+                ProgressView()
+                Spacer()
+            }
+            .padding(.vertical, 32)
         } else if viewModel.searchResults.isEmpty {
-            Spacer()
             if viewModel.isSearchActive {
                 ContentUnavailableView.search(text: viewModel.searchText)
             } else {
@@ -122,9 +125,8 @@ struct SearchResultsSheet: View {
                     )
                 }
             }
-            Spacer()
         } else {
-            List(viewModel.searchResults) { result in
+            ForEach(viewModel.searchResults) { result in
                 Button {
                     selectedRestaurant = result.summary
                 } label: {
@@ -132,7 +134,6 @@ struct SearchResultsSheet: View {
                 }
                 .buttonStyle(.plain)
             }
-            .listStyle(.plain)
         }
     }
 
