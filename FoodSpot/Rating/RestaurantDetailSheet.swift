@@ -67,18 +67,29 @@ struct RestaurantDetailSheet: View {
                     }
 
                     ForEach(viewModel.dishAverages) { dish in
-                        Button {
-                            prefillDishName = dish.dishName
-                            isShowingRatingForm = true
+                        DisclosureGroup {
+                            RatingBlockSummaryView(
+                                categories: [
+                                    ("Geschmack", dish.avgTaste),
+                                    ("Textur", dish.avgTexture),
+                                    ("Aussehen", dish.avgAppearance),
+                                    ("Geruch", dish.avgSmell),
+                                ],
+                                overall: dish.avgOverall,
+                                ratingCount: dish.ratingCount
+                            )
+
+                            Button {
+                                prefillDishName = dish.dishName
+                                isShowingRatingForm = true
+                            } label: {
+                                Label("Erneut bewerten", systemImage: "star.fill")
+                            }
+                            .buttonStyle(.borderless)
                         } label: {
                             HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(dish.dishName)
-                                        .foregroundStyle(.primary)
-                                    Text("\(dish.ratingCount) Bewertung\(dish.ratingCount == 1 ? "" : "en")")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
+                                Text(dish.dishName)
+                                    .foregroundStyle(.primary)
                                 Spacer()
                                 StarRatingDisplayView(value: dish.avgOverall)
                                 Text(String(format: "%.1f", dish.avgOverall))
