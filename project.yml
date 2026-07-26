@@ -27,8 +27,10 @@ targets:
     info:
       path: FoodSpot/Resources/Info.plist
       properties:
-        UILaunchScreen: {}
+        UILaunchScreen:
+          UIColorName: AccentColor
         NSLocationWhenInUseUsageDescription: "FoodSpot benötigt deinen Standort, um Restaurants in deiner Nähe zu finden."
+        ITSAppUsesNonExemptEncryption: false
         SUPABASE_URL: $(SUPABASE_URL)
         SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
     entitlements:

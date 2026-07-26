@@ -28,6 +28,7 @@
 		90642F8E9F03FF29E60B0D24 /* RestaurantDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A53C6085D502770682BE33 /* RestaurantDetailSheet.swift */; };
 		996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */; };
 		9CAD56DE268D3E133FFDEDB2 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D6926D49DF2EF9B1022016 /* Restaurant.swift */; };
+		9D1075352604E71F083EAFDF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 76F3F88C4127121ED1BCC577 /* PrivacyInfo.xcprivacy */; };
 		A683ED4830E39E6A9DFDF62B /* DishSearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752EE42B46022C461F3C9A8B /* DishSearchResult.swift */; };
 		B8C29099AD7B0E2A24D65255 /* AddRestaurantSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EEFC6C572C941E77B645A33 /* AddRestaurantSearchViewModel.swift */; };
 		B8ECA48FF282E68102C85C65 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E69BB1B74FCA01B9323F99 /* MapViewModel.swift */; };
@@ -62,6 +63,7 @@
 		634DAD38D4FF08BBADC120B2 /* RatingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingRepository.swift; sourceTree = "<group>"; };
 		69C516F54639208B82E9562C /* RestaurantSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantSummary.swift; sourceTree = "<group>"; };
 		752EE42B46022C461F3C9A8B /* DishSearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishSearchResult.swift; sourceTree = "<group>"; };
+		76F3F88C4127121ED1BCC577 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		77EAC1AA3F420025A27E2717 /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		8810A4B781D64ED0557C66CE /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */,
+				76F3F88C4127121ED1BCC577 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82046945E5E2F4B298B044DD /* Assets.xcassets in Resources */,
+				9D1075352604E71F083EAFDF /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
