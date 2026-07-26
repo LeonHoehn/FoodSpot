@@ -10,6 +10,7 @@ final class MapViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
     @Published var errorMessage: String?
+    @Published var selectedPinID: MapPin.ID?
 
     private let restaurantRepository = RestaurantRepository()
     private let dishSearchRepository = DishSearchRepository()
@@ -25,6 +26,14 @@ final class MapViewModel: ObservableObject {
 
     var showsNoResultsHint: Bool {
         isSearchActive && !isSearching && searchResults.isEmpty
+    }
+
+    func restaurantSummary(for pinID: MapPin.ID) -> RestaurantSummary? {
+        if isSearchActive {
+            return searchResults.first { $0.restaurantId == pinID }?.summary
+        } else {
+            return restaurants.first { $0.id == pinID }?.summary
+        }
     }
 
     func loadRestaurants() async {

@@ -3,16 +3,18 @@ import SwiftUI
 
 struct MapView: View {
     @ObservedObject var viewModel: MapViewModel
-    @StateObject private var locationManager = LocationManager()
+    @ObservedObject var locationManager: LocationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    @State private var selectedRestaurant: RestaurantSummary?
 
     var body: some View {
-        Map(position: $cameraPosition) {
+        Map(position: $cameraPosition, selection: $viewModel.selectedPinID) {
             UserAnnotation()
 
             ForEach(viewModel.displayedPins) { pin in
                 Marker(pin.name, coordinate: pin.coordinate)
                     .tint(viewModel.isSearchActive ? .orange : .accentColor)
+                    .tag(pin.id)
             }
         }
         .mapControls {
@@ -43,6 +45,13 @@ struct MapView: View {
                 viewModel.scheduleSearch(near: locationManager.currentLocation)
             }
         }
+        .onChange(of: viewModel.selectedPinID) { _, newValue in
+            guard let id = newValue else { return }
+            selectedRestaurant = viewModel.restaurantSummary(for: id)
+        }
+        .sheet(item: $selectedRestaurant, onDismiss: { viewModel.selectedPinID = nil }) { restaurant in
+            RestaurantDetailSheet(restaurant: restaurant)
+        }
         .task {
             locationManager.requestAuthorization()
             locationManager.requestLocation()
@@ -63,5 +72,5 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView(viewModel: MapViewModel())
+    MapView(viewModel: MapViewModel(), locationManager: LocationManager())
 }

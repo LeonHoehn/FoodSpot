@@ -47,4 +47,8 @@ extension DishSearchResult {
     var asMapPin: MapPin {
         MapPin(id: restaurantId, name: restaurantName, coordinate: coordinate)
     }
+
+    var summary: RestaurantSummary {
+        RestaurantSummary(id: restaurantId, name: restaurantName, address: restaurantAddress, coordinate: coordinate)
+    }
 }

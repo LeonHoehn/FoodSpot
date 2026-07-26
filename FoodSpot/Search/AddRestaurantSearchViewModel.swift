@@ -1,0 +1,48 @@
+import CoreLocation
+import Foundation
+import MapKit
+
+@MainActor
+final class AddRestaurantSearchViewModel: ObservableObject {
+    @Published var query = ""
+    @Published private(set) var results: [MKMapItem] = []
+    @Published private(set) var isSearching = false
+    @Published var errorMessage: String?
+
+    private let searchService = RestaurantSearchService()
+    private var searchTask: Task<Void, Never>?
+
+    func scheduleSearch(near coordinate: CLLocationCoordinate2D?) {
+        searchTask?.cancel()
+
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            results = []
+            return
+        }
+
+        guard let coordinate else {
+            errorMessage = "Standort wird noch ermittelt…"
+            return
+        }
+
+        searchTask = Task {
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+
+            isSearching = true
+            errorMessage = nil
+            defer { isSearching = false }
+
+            do {
+                let items = try await searchService.search(query: trimmed, near: coordinate)
+                guard !Task.isCancelled else { return }
+                results = items
+            } catch {
+                if !Task.isCancelled {
+                    errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+}

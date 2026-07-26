@@ -1,3 +1,4 @@
+import MapKit
 import SwiftUI
 
 struct ContentView: View {
@@ -15,12 +16,17 @@ struct ContentView: View {
 private struct HomeView: View {
     @EnvironmentObject private var authViewModel: AuthViewModel
     @StateObject private var mapViewModel = MapViewModel()
+    @StateObject private var locationManager = LocationManager()
+
+    @State private var isShowingAddRestaurant = false
+    @State private var restaurantPendingRating: RestaurantSummary?
+    @State private var addRestaurantErrorMessage: String?
 
     private static let radiusOptions: [Double] = [1, 2, 5, 10, 20]
 
     var body: some View {
         NavigationStack {
-            MapView(viewModel: mapViewModel)
+            MapView(viewModel: mapViewModel, locationManager: locationManager)
                 .navigationTitle("FoodSpot")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -32,7 +38,33 @@ private struct HomeView: View {
                             Task { await authViewModel.signOut() }
                         }
                     }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isShowingAddRestaurant = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                    }
                 }
+        }
+        .sheet(isPresented: $isShowingAddRestaurant) {
+            AddRestaurantSearchView(userLocation: locationManager.currentLocation) { mapItem in
+                Task { await handleRestaurantSelected(mapItem) }
+            }
+        }
+        .sheet(item: $restaurantPendingRating) { restaurant in
+            RatingFormView(restaurant: restaurant)
+        }
+        .alert(
+            "Restaurant konnte nicht angelegt werden",
+            isPresented: Binding(
+                get: { addRestaurantErrorMessage != nil },
+                set: { if !$0 { addRestaurantErrorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(addRestaurantErrorMessage ?? "")
         }
     }
 
@@ -51,6 +83,17 @@ private struct HomeView: View {
             }
         } label: {
             Label("\(Int(mapViewModel.radiusKm)) km", systemImage: "location.circle")
+        }
+    }
+
+    @MainActor
+    private func handleRestaurantSelected(_ mapItem: MKMapItem) async {
+        do {
+            let restaurant = try await RestaurantRepository().findOrCreate(mapItem: mapItem)
+            await mapViewModel.loadRestaurants()
+            restaurantPendingRating = restaurant.summary
+        } catch {
+            addRestaurantErrorMessage = error.localizedDescription
         }
     }
 }
