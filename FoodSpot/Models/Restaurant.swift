@@ -23,4 +23,8 @@ extension Restaurant {
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: lat, longitude: lng)
     }
+
+    var asMapPin: MapPin {
+        MapPin(id: id, name: name, coordinate: coordinate)
+    }
 }

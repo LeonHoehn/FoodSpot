@@ -10,17 +10,20 @@
 		235E28C26D8BB74A8DABF898 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68B099F9968F98A93654EBD /* LocationManager.swift */; };
 		427E289054AB357B4F5AC666 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04418F5D3573E0F85DCC0D01 /* ContentView.swift */; };
 		45400A55AEE326A9A00976FE /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AEE08CB3907546E22E677F /* Dish.swift */; };
+		4D515A12063B05275832AE61 /* DishSearchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EFA2C3A696012983045750 /* DishSearchRepository.swift */; };
 		5D850FF5C913F52B2A52F6FC /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 7F2DE351160F04152FF87F51 /* Supabase */; };
 		6FDD1779B3FA4BB6C48480CD /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5E18B6F2EE644786298D51 /* AuthViewModel.swift */; };
 		82046945E5E2F4B298B044DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */; };
 		996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35187A3FA79C10E1AE5A9562 /* FoodSpotApp.swift */; };
 		9CAD56DE268D3E133FFDEDB2 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D6926D49DF2EF9B1022016 /* Restaurant.swift */; };
+		A683ED4830E39E6A9DFDF62B /* DishSearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752EE42B46022C461F3C9A8B /* DishSearchResult.swift */; };
 		B8ECA48FF282E68102C85C65 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E69BB1B74FCA01B9323F99 /* MapViewModel.swift */; };
 		B9466339793E7FF3FA655BA2 /* RestaurantRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124DE9A4B5B90A2B51694FD8 /* RestaurantRepository.swift */; };
 		BB6F8A1520501751990C283E /* Rating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F76869786188C43BD36BF90 /* Rating.swift */; };
 		C92E932231FA04D76CCA2817 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */; };
 		D18E5976F280619B2FB485AB /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62883C028D1E26FC2C8F4E47 /* SignInView.swift */; };
 		DF336609A40E744433E64179 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D91768F80CD6515B210D71 /* MapView.swift */; };
+		EC5C9C63905F7F085E8C55FF /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77EAC1AA3F420025A27E2717 /* MapPin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,11 +35,14 @@
 		4755407744E4B83D360622CD /* FoodSpot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FoodSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F76869786188C43BD36BF90 /* Rating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rating.swift; sourceTree = "<group>"; };
 		62883C028D1E26FC2C8F4E47 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		752EE42B46022C461F3C9A8B /* DishSearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishSearchResult.swift; sourceTree = "<group>"; };
+		77EAC1AA3F420025A27E2717 /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		8810A4B781D64ED0557C66CE /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		98AEE08CB3907546E22E677F /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
 		98D91768F80CD6515B210D71 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		B68B099F9968F98A93654EBD /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		D1EFA2C3A696012983045750 /* DishSearchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishSearchRepository.swift; sourceTree = "<group>"; };
 		E9E69BB1B74FCA01B9323F99 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		F7D6926D49DF2EF9B1022016 /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,6 +71,7 @@
 		65BE3C544556360CF982286A /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D1EFA2C3A696012983045750 /* DishSearchRepository.swift */,
 				B68B099F9968F98A93654EBD /* LocationManager.swift */,
 				124DE9A4B5B90A2B51694FD8 /* RestaurantRepository.swift */,
 				8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */,
@@ -76,6 +83,8 @@
 			isa = PBXGroup;
 			children = (
 				98AEE08CB3907546E22E677F /* Dish.swift */,
+				752EE42B46022C461F3C9A8B /* DishSearchResult.swift */,
+				77EAC1AA3F420025A27E2717 /* MapPin.swift */,
 				5F76869786188C43BD36BF90 /* Rating.swift */,
 				F7D6926D49DF2EF9B1022016 /* Restaurant.swift */,
 			);
@@ -221,8 +230,11 @@
 				6FDD1779B3FA4BB6C48480CD /* AuthViewModel.swift in Sources */,
 				427E289054AB357B4F5AC666 /* ContentView.swift in Sources */,
 				45400A55AEE326A9A00976FE /* Dish.swift in Sources */,
+				4D515A12063B05275832AE61 /* DishSearchRepository.swift in Sources */,
+				A683ED4830E39E6A9DFDF62B /* DishSearchResult.swift in Sources */,
 				996B44FB265079DE5424379F /* FoodSpotApp.swift in Sources */,
 				235E28C26D8BB74A8DABF898 /* LocationManager.swift in Sources */,
+				EC5C9C63905F7F085E8C55FF /* MapPin.swift in Sources */,
 				DF336609A40E744433E64179 /* MapView.swift in Sources */,
 				B8ECA48FF282E68102C85C65 /* MapViewModel.swift in Sources */,
 				BB6F8A1520501751990C283E /* Rating.swift in Sources */,
