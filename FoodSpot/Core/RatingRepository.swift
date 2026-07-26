@@ -66,4 +66,29 @@ struct RatingRepository {
             .upsert(payload, onConflict: "user_id,dish_id")
             .execute()
     }
+
+    /// Eigene Bewertung zu einem Gericht, falls vorhanden - zum
+    /// Vorausfüllen des Formulars beim Bearbeiten.
+    func fetchOwn(dishId: UUID) async throws -> Rating? {
+        let userId = try await client.auth.session.user.id
+        let rows: [Rating] = try await client
+            .from("ratings")
+            .select()
+            .eq("user_id", value: userId)
+            .eq("dish_id", value: dishId)
+            .limit(1)
+            .execute()
+            .value
+        return rows.first
+    }
+
+    func delete(dishId: UUID) async throws {
+        let userId = try await client.auth.session.user.id
+        try await client
+            .from("ratings")
+            .delete()
+            .eq("user_id", value: userId)
+            .eq("dish_id", value: dishId)
+            .execute()
+    }
 }

@@ -3,6 +3,7 @@ import Foundation
 @MainActor
 final class RatingFormViewModel: ObservableObject {
     let restaurant: RestaurantSummary
+    private let initialDishId: UUID?
 
     @Published var dishQuery = ""
 
@@ -19,14 +20,21 @@ final class RatingFormViewModel: ObservableObject {
     @Published var waitTime: Double = 0
 
     @Published private(set) var isSubmitting = false
+    @Published private(set) var isDeleting = false
     @Published var errorMessage: String?
     @Published private(set) var didSubmit = false
+    @Published private(set) var didDelete = false
 
     private let dishRepository = DishRepository()
     private let ratingRepository = RatingRepository()
 
-    init(restaurant: RestaurantSummary, initialDishName: String? = nil) {
+    /// Nur gesetzt, wenn eine eigene Bewertung zu diesem Gericht existiert
+    /// (zum Bearbeiten geöffnet) - macht den Löschen-Button sichtbar.
+    private(set) var existingDishId: UUID?
+
+    init(restaurant: RestaurantSummary, initialDishName: String? = nil, initialDishId: UUID? = nil) {
         self.restaurant = restaurant
+        self.initialDishId = initialDishId
         self.dishQuery = initialDishName ?? ""
     }
 
@@ -40,6 +48,27 @@ final class RatingFormViewModel: ObservableObject {
 
     private var allCategoriesRated: Bool {
         [taste, texture, appearance, smell, service, ambience, value, waitTime].allSatisfy { $0 > 0 }
+    }
+
+    /// Lädt die eigene bestehende Bewertung (falls vorhanden) und füllt
+    /// die Sterne damit vor, statt blind neu bewerten zu lassen.
+    func loadExistingRatingIfNeeded() async {
+        guard let dishId = initialDishId else { return }
+
+        do {
+            guard let rating = try await ratingRepository.fetchOwn(dishId: dishId) else { return }
+            existingDishId = dishId
+            taste = rating.taste
+            texture = rating.texture
+            appearance = rating.appearance
+            smell = rating.smell
+            service = rating.service
+            ambience = rating.ambience
+            value = rating.value
+            waitTime = rating.waitTime
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     func submit() async {
@@ -65,6 +94,21 @@ final class RatingFormViewModel: ObservableObject {
                 waitTime: waitTime
             )
             didSubmit = true
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func deleteExistingRating() async {
+        guard let dishId = existingDishId else { return }
+
+        isDeleting = true
+        errorMessage = nil
+        defer { isDeleting = false }
+
+        do {
+            try await ratingRepository.delete(dishId: dishId)
+            didDelete = true
         } catch {
             errorMessage = error.localizedDescription
         }

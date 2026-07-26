@@ -7,6 +7,7 @@ struct RestaurantDetailSheet: View {
     @StateObject private var viewModel: RestaurantDetailViewModel
     @State private var isShowingRatingForm = false
     @State private var prefillDishName: String?
+    @State private var prefillDishId: UUID?
 
     init(restaurant: RestaurantSummary) {
         self.restaurant = restaurant
@@ -81,6 +82,7 @@ struct RestaurantDetailSheet: View {
 
                             Button {
                                 prefillDishName = dish.dishName
+                                prefillDishId = dish.dishId
                                 isShowingRatingForm = true
                             } label: {
                                 Label("Erneut bewerten", systemImage: "star.fill")
@@ -109,6 +111,7 @@ struct RestaurantDetailSheet: View {
                 Section {
                     Button {
                         prefillDishName = nil
+                        prefillDishId = nil
                         isShowingRatingForm = true
                     } label: {
                         Label("Neues Gericht bewerten", systemImage: "star.fill")
@@ -134,7 +137,7 @@ struct RestaurantDetailSheet: View {
         }
         .presentationDetents([.medium, .large])
         .sheet(isPresented: $isShowingRatingForm) {
-            RatingFormView(restaurant: restaurant, initialDishName: prefillDishName)
+            RatingFormView(restaurant: restaurant, initialDishName: prefillDishName, initialDishId: prefillDishId)
                 .onDisappear { Task { await viewModel.load() } }
         }
     }

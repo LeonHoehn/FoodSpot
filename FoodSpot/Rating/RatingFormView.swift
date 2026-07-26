@@ -3,9 +3,16 @@ import SwiftUI
 struct RatingFormView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: RatingFormViewModel
+    @State private var isShowingDeleteConfirmation = false
 
-    init(restaurant: RestaurantSummary, initialDishName: String? = nil) {
-        _viewModel = StateObject(wrappedValue: RatingFormViewModel(restaurant: restaurant, initialDishName: initialDishName))
+    init(restaurant: RestaurantSummary, initialDishName: String? = nil, initialDishId: UUID? = nil) {
+        _viewModel = StateObject(
+            wrappedValue: RatingFormViewModel(
+                restaurant: restaurant,
+                initialDishName: initialDishName,
+                initialDishId: initialDishId
+            )
+        )
     }
 
     var body: some View {
@@ -52,6 +59,15 @@ struct RatingFormView: View {
                         .font(.footnote)
                         .foregroundStyle(.red)
                 }
+
+                if viewModel.existingDishId != nil {
+                    Section {
+                        Button("Bewertung löschen", role: .destructive) {
+                            isShowingDeleteConfirmation = true
+                        }
+                        .disabled(viewModel.isDeleting)
+                    }
+                }
             }
             .navigationTitle(viewModel.restaurant.name)
             .navigationBarTitleDisplayMode(.inline)
@@ -72,9 +88,29 @@ struct RatingFormView: View {
                 }
             }
             .overlay {
-                if viewModel.isSubmitting {
+                if viewModel.isSubmitting || viewModel.isDeleting {
                     ProgressView()
                 }
+            }
+            .confirmationDialog(
+                "Bewertung wirklich löschen?",
+                isPresented: $isShowingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Löschen", role: .destructive) {
+                    Task {
+                        await viewModel.deleteExistingRating()
+                        if viewModel.didDelete {
+                            dismiss()
+                        }
+                    }
+                }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Deine Bewertung für „\(viewModel.dishQuery)“ wird endgültig entfernt.")
+            }
+            .task {
+                await viewModel.loadExistingRatingIfNeeded()
             }
         }
     }

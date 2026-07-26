@@ -6,6 +6,10 @@ struct ProfileView: View {
     @ObservedObject var locationManager: LocationManager
     @StateObject private var viewModel = ProfileViewModel()
     @State private var selectedRestaurant: RestaurantSummary?
+    @State private var editingRating: MyRatingRow?
+    @State private var ratingPendingDeletion: MyRatingRow?
+
+    private let ratingRepository = RatingRepository()
 
     var body: some View {
         List {
@@ -32,6 +36,20 @@ struct ProfileView: View {
                                 myRatingRow(entry)
                             }
                             .buttonStyle(.plain)
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    ratingPendingDeletion = entry
+                                } label: {
+                                    Label("Löschen", systemImage: "trash")
+                                }
+
+                                Button {
+                                    editingRating = entry
+                                } label: {
+                                    Label("Bearbeiten", systemImage: "pencil")
+                                }
+                                .tint(.orange)
+                            }
                         }
                     }
                 }
@@ -81,6 +99,40 @@ struct ProfileView: View {
             RestaurantDetailSheet(restaurant: restaurant)
                 .onDisappear { Task { await viewModel.load() } }
         }
+        .sheet(item: $editingRating) { entry in
+            RatingFormView(restaurant: entry.summary, initialDishName: entry.dish.name, initialDishId: entry.dishId)
+                .onDisappear { Task { await viewModel.load() } }
+        }
+        .confirmationDialog(
+            "Bewertung wirklich löschen?",
+            isPresented: Binding(
+                get: { ratingPendingDeletion != nil },
+                set: { if !$0 { ratingPendingDeletion = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Löschen", role: .destructive) {
+                guard let entry = ratingPendingDeletion else { return }
+                Task {
+                    await deleteRating(entry)
+                }
+            }
+            Button("Abbrechen", role: .cancel) {}
+        } message: {
+            if let entry = ratingPendingDeletion {
+                Text("Deine Bewertung für „\(entry.dish.name)“ bei \(entry.restaurant.name) wird endgültig entfernt.")
+            }
+        }
+    }
+
+    private func deleteRating(_ entry: MyRatingRow) async {
+        do {
+            try await ratingRepository.delete(dishId: entry.dishId)
+            await viewModel.load()
+        } catch {
+            viewModel.errorMessage = error.localizedDescription
+        }
+        ratingPendingDeletion = nil
     }
 
     private func myRatingRow(_ entry: MyRatingRow) -> some View {
