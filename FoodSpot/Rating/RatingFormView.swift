@@ -4,8 +4,8 @@ struct RatingFormView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: RatingFormViewModel
 
-    init(restaurant: RestaurantSummary) {
-        _viewModel = StateObject(wrappedValue: RatingFormViewModel(restaurant: restaurant))
+    init(restaurant: RestaurantSummary, initialDishName: String? = nil) {
+        _viewModel = StateObject(wrappedValue: RatingFormViewModel(restaurant: restaurant, initialDishName: initialDishName))
     }
 
     var body: some View {

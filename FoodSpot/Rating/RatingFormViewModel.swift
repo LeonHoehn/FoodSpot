@@ -25,8 +25,9 @@ final class RatingFormViewModel: ObservableObject {
     private let dishRepository = DishRepository()
     private let ratingRepository = RatingRepository()
 
-    init(restaurant: RestaurantSummary) {
+    init(restaurant: RestaurantSummary, initialDishName: String? = nil) {
         self.restaurant = restaurant
+        self.dishQuery = initialDishName ?? ""
     }
 
     var dishSuggestions: [DishCatalogEntry] {
