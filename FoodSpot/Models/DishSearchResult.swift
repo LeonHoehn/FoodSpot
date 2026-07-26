@@ -17,7 +17,9 @@ struct DishSearchResult: Codable, Identifiable, Hashable {
     let avgSmell: Double
     let avgOverall: Double
     let ratingCount: Int
-    let distanceMeters: Double
+    /// Nur gesetzt bei der Umgebung-Suche (search_dishes); die globale
+    /// Suche (search_dishes_global) liefert keine Distanz.
+    let distanceMeters: Double?
 
     var id: UUID { restaurantId }
 

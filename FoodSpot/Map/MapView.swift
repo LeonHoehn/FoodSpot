@@ -21,30 +21,22 @@ struct MapView: View {
             MapUserLocationButton()
             MapCompass()
         }
-        .searchable(text: $viewModel.searchText, prompt: "Gericht suchen, z. B. Ramen")
         .overlay(alignment: .top) {
             if let errorMessage = viewModel.errorMessage {
                 hintBanner(errorMessage)
-            } else if viewModel.showsNoResultsHint {
-                hintBanner("Keine Bewertungen für „\(viewModel.searchText)“ im Umkreis von \(Int(viewModel.radiusKm)) km.")
             }
         }
         .overlay {
-            if (viewModel.isLoading && viewModel.restaurants.isEmpty) || viewModel.isSearching {
+            if viewModel.isLoading && viewModel.restaurants.isEmpty {
                 ProgressView()
             } else if viewModel.showsEmptyMapHint {
                 emptyMapHint
             }
         }
-        .onChange(of: viewModel.searchText) {
-            performSearch()
-        }
-        .onChange(of: viewModel.radiusKm) {
-            performSearch()
-        }
-        .onChange(of: locationManager.locationUpdateCount) {
-            if viewModel.isSearchActive {
-                performSearch()
+        .overlay(alignment: .bottom) {
+            if !viewModel.isSearchSheetPresented {
+                searchTrigger
+                    .padding(.bottom, 8)
             }
         }
         .onChange(of: viewModel.selectedPinID) { _, newValue in
@@ -54,6 +46,12 @@ struct MapView: View {
         .sheet(item: $selectedRestaurant, onDismiss: { viewModel.selectedPinID = nil }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
         }
+        .sheet(isPresented: $viewModel.isSearchSheetPresented) {
+            SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+        }
         .task {
             locationManager.requestAuthorization()
             locationManager.requestLocation()
@@ -61,11 +59,23 @@ struct MapView: View {
         }
     }
 
-    private func performSearch() {
-        viewModel.scheduleSearch(
-            near: locationManager.currentLocation,
-            isAuthorizationDenied: locationManager.isAuthorizationDenied
-        )
+    private var searchTrigger: some View {
+        Button {
+            viewModel.isSearchSheetPresented = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                Text(viewModel.searchText.isEmpty ? "Gericht suchen, z. B. Ramen" : viewModel.searchText)
+                    .foregroundStyle(viewModel.searchText.isEmpty ? .secondary : .primary)
+                    .lineLimit(1)
+                Spacer()
+            }
+            .padding(12)
+            .background(.thickMaterial, in: .rect(cornerRadius: 14))
+            .padding(.horizontal, 16)
+        }
+        .buttonStyle(.plain)
     }
 
     private var emptyMapHint: some View {

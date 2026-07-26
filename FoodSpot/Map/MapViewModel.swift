@@ -6,7 +6,9 @@ final class MapViewModel: ObservableObject {
     @Published private(set) var restaurants: [Restaurant] = []
     @Published private(set) var searchResults: [DishSearchResult] = []
     @Published var searchText = ""
+    @Published var searchScope: SearchScope = .nearby
     @Published var radiusKm: Double = 5
+    @Published var isSearchSheetPresented = false
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
     @Published var errorMessage: String?
@@ -51,7 +53,7 @@ final class MapViewModel: ObservableObject {
         }
     }
 
-    func scheduleSearch(near coordinate: CLLocationCoordinate2D?, isAuthorizationDenied: Bool = false) {
+    func performSearch(near coordinate: CLLocationCoordinate2D?, isAuthorizationDenied: Bool = false) {
         searchTask?.cancel()
 
         guard isSearchActive else {
@@ -60,39 +62,63 @@ final class MapViewModel: ObservableObject {
             return
         }
 
-        if isAuthorizationDenied {
-            errorMessage = "Standortzugriff verweigert – aktiviere ihn in den Einstellungen, um nach Gerichten in deiner Nähe zu suchen."
-            return
-        }
-
-        guard let coordinate else {
-            errorMessage = "Standort wird noch ermittelt…"
-            return
-        }
-
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let radius = radiusKm
 
-        searchTask = Task {
-            try? await Task.sleep(for: .milliseconds(350))
-            guard !Task.isCancelled else { return }
-
-            isSearching = true
-            errorMessage = nil
-            defer { isSearching = false }
-
-            do {
-                let results = try await dishSearchRepository.search(
-                    query: query,
-                    lat: coordinate.latitude,
-                    lng: coordinate.longitude,
-                    radiusKm: radius
-                )
+        switch searchScope {
+        case .global:
+            searchTask = Task {
+                try? await Task.sleep(for: .milliseconds(350))
                 guard !Task.isCancelled else { return }
-                searchResults = results
-            } catch {
-                if !Task.isCancelled {
-                    errorMessage = error.localizedDescription
+
+                isSearching = true
+                errorMessage = nil
+                defer { isSearching = false }
+
+                do {
+                    let results = try await dishSearchRepository.searchGlobal(query: query)
+                    guard !Task.isCancelled else { return }
+                    searchResults = results
+                } catch {
+                    if !Task.isCancelled {
+                        errorMessage = error.localizedDescription
+                    }
+                }
+            }
+
+        case .nearby:
+            if isAuthorizationDenied {
+                errorMessage = "Standortzugriff verweigert – aktiviere ihn in den Einstellungen, um nach Gerichten in deiner Nähe zu suchen."
+                return
+            }
+
+            guard let coordinate else {
+                errorMessage = "Standort wird noch ermittelt…"
+                return
+            }
+
+            let radius = radiusKm
+
+            searchTask = Task {
+                try? await Task.sleep(for: .milliseconds(350))
+                guard !Task.isCancelled else { return }
+
+                isSearching = true
+                errorMessage = nil
+                defer { isSearching = false }
+
+                do {
+                    let results = try await dishSearchRepository.search(
+                        query: query,
+                        lat: coordinate.latitude,
+                        lng: coordinate.longitude,
+                        radiusKm: radius
+                    )
+                    guard !Task.isCancelled else { return }
+                    searchResults = results
+                } catch {
+                    if !Task.isCancelled {
+                        errorMessage = error.localizedDescription
+                    }
                 }
             }
         }
