@@ -39,6 +39,20 @@ struct SignInView: View {
                 }
             }
 
+            #if DEBUG
+            Button {
+                Task { await authViewModel.signInAsDebugUser() }
+            } label: {
+                Text("Debug-Login (nur lokal)")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .tint(.gray)
+            .frame(height: 50)
+            .padding(.horizontal, 32)
+            .disabled(authViewModel.isLoading)
+            #endif
+
             if let errorMessage = authViewModel.errorMessage {
                 Text(errorMessage)
                     .font(.footnote)

@@ -33,11 +33,15 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         SUPABASE_URL: $(SUPABASE_URL)
         SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
-    entitlements:
-      path: FoodSpot/FoodSpot.entitlements
-      properties:
-        com.apple.developer.applesignin:
-          - Default
+    # TEMP: Sign-in-with-Apple-Entitlement entfernt, weil Personal Teams
+    # dieses Capability nicht signieren können. Siehe README, Abschnitt
+    # "Bekannte Übergangslösungen" - wieder einfügen, sobald das Apple
+    # Developer Program Enrollment durch ist:
+    # entitlements:
+    #   path: FoodSpot/FoodSpot.entitlements
+    #   properties:
+    #     com.apple.developer.applesignin:
+    #       - Default
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.foodspot.app

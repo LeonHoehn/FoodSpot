@@ -21,6 +21,14 @@ site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = []
 jwt_expiry = 3600
 enable_signup = true
+# TEMP: nur für den Debug-Login-Bypass (siehe README, "Bekannte
+# Übergangslösungen"), solange Sign in with Apple nicht nutzbar ist.
+# Muss zusätzlich im Dashboard des LIVE-Projekts manuell aktiviert werden
+# (Authentication -> Sign In / Providers -> Anonymous Sign-ins) - dieser
+# Wert hier gilt nur für die lokale `supabase start`-Umgebung, ein
+# `supabase config push` wird bewusst nicht ausgeführt, um bestehende
+# Dashboard-Einstellungen (z. B. den Apple-Provider) nicht zu überschreiben.
+enable_anonymous_sign_ins = true
 
 [auth.external.apple]
 enabled = true

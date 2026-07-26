@@ -65,4 +65,28 @@ final class AuthViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+
+    #if DEBUG
+    /// NUR für lokale Tests, solange Sign in with Apple wegen des fehlenden
+    /// Apple-Developer-Team-Enrollments nicht nutzbar ist (siehe README,
+    /// "Bekannte Übergangslösungen"). Nutzt Supabase Anonymous Sign-in statt
+    /// eines rein lokal erfundenen Users: die RLS-Policies auf
+    /// ratings/dishes/restaurants greifen nur `to authenticated` mit
+    /// echtem `auth.uid()` - ein frei erfundener User könnte nichts
+    /// schreiben. Anonymous Sign-in erzeugt eine echte, von Supabase
+    /// ausgestellte Session mit `role: authenticated`, wodurch der
+    /// komplette Bewertungs-Flow reell testbar ist. Muss im
+    /// Supabase-Dashboard unter Authentication aktiviert sein.
+    func signInAsDebugUser() async {
+        errorMessage = nil
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            try await client.auth.signInAnonymously(data: ["full_name": "Debug User"])
+        } catch {
+            errorMessage = "Debug-Login fehlgeschlagen: \(error.localizedDescription)"
+        }
+    }
+    #endif
 }

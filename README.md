@@ -50,6 +50,11 @@ interpretieren `//` sonst als Kommentar.
 
 ## 4. Sign in with Apple aktivieren
 
+> **Aktuell pausiert**, siehe [Bekannte Übergangslösungen](#bekannte-übergangslösungen)
+> unten — das Capability ist aus dem Projekt entfernt, bis das Apple
+> Developer Program Enrollment durch ist. Die Schritte hier gelten für
+> danach.
+
 Das kann nicht automatisiert werden, da es Zugriff auf euren Apple-Developer-
 und Supabase-Account erfordert:
 
@@ -99,6 +104,50 @@ Was noch manuell im Apple-Account passieren muss:
 7. **Versionierung**: `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in
    `project.yml` vor jedem neuen Upload hochzählen (App Store Connect
    akzeptiert keine doppelte Build-Nummer pro Version).
+
+## Bekannte Übergangslösungen
+
+**Stand: Apple Developer Program Enrollment noch nicht freigegeben.**
+Solange nur ein „Personal Team“ zur Verfügung steht (das Capability *Sign
+in with Apple* nicht signieren kann), gilt:
+
+- **Sign-in-with-Apple-Capability ist aus dem Projekt entfernt.** In
+  `project.yml` ist der `entitlements`-Block für den Sign-in-with-Apple-
+  Eintrag auskommentiert, `FoodSpot/FoodSpot.entitlements` existiert
+  aktuell nicht. Der echte „Sign in with Apple“-Button in `SignInView`
+  bleibt sichtbar, würde aber ohne das Capability fehlschlagen.
+- **Debug-Login-Bypass** (`AuthViewModel.signInAsDebugUser()`, Button
+  „Debug-Login (nur lokal)“ in `SignInView`): meldet über Supabase
+  **Anonymous Sign-in** an, nicht über einen rein lokal erfundenen User —
+  die RLS-Policies auf `ratings`/`dishes`/`restaurants` greifen nur
+  `to authenticated` mit echtem `auth.uid()`, ein frei erfundener User
+  hätte also keinen Schreibzugriff gehabt und der Bewertungs-Flow wäre
+  nicht wirklich testbar gewesen. Komplett mit `#if DEBUG` umschlossen
+  (Methode und Button) — im Release-Build weder kompiliert noch sichtbar,
+  per `strings` auf dem gebauten Release-Binary verifiziert.
+  - **Voraussetzung:** *Anonymous Sign-ins* muss im Supabase-Dashboard des
+    Live-Projekts aktiviert sein (*Authentication → Sign In / Providers →
+    Anonymous Sign-ins*). Das ist absichtlich **nicht** per
+    `supabase config push` automatisiert, weil dieser Befehl die komplette
+    `config.toml` (inkl. der `auth.external.apple`-Sektion mit einem
+    aktuell nicht gesetzten Secret) auf das Live-Projekt schreiben und
+    dabei bereits im Dashboard gepflegte Auth-Einstellungen überschreiben
+    würde. `supabase/config.toml` hat `enable_anonymous_sign_ins = true`
+    nur für die lokale `supabase start`-Umgebung.
+  - Ohne aktivierte Anonymous Sign-ins schlägt der Debug-Login mit einer
+    Fehlermeldung im UI fehl (GoTrue lehnt den `signup`-Call ab).
+
+**Zurückbauen, sobald das Team-Enrollment durchgelaufen ist:**
+
+1. In `project.yml` den auskommentierten `entitlements`-Block wieder
+   aktivieren, `xcodegen generate` laufen lassen.
+2. Die Schritte aus Abschnitt 4 oben (App-ID, Xcode-Team, Supabase-Apple-
+   Provider) durchführen.
+3. `AuthViewModel.signInAsDebugUser()` und den Debug-Button in
+   `SignInView` entfernen (oder als Debug-Komfort behalten — sie
+   kompilieren ohnehin nie in Release/TestFlight mit).
+4. Optional: *Anonymous Sign-ins* im Supabase-Dashboard wieder
+   deaktivieren, falls nicht anderweitig gebraucht.
 
 ## Projektstruktur
 
