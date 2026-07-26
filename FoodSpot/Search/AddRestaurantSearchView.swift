@@ -16,6 +16,8 @@ struct AddRestaurantSearchView: View {
                     Text(errorMessage)
                         .foregroundStyle(.red)
                         .font(.footnote)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                 }
 
                 ForEach(Array(viewModel.results.enumerated()), id: \.offset) { _, item in
@@ -23,18 +25,17 @@ struct AddRestaurantSearchView: View {
                         onSelect(item)
                         dismiss()
                     } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(item.name ?? "Unbekanntes Restaurant")
-                                .foregroundStyle(.primary)
-                            if let address = item.placemark.title {
-                                Text(address)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+                        resultCard(item)
                     }
+                    .buttonStyle(.plain)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
+            .listStyle(.plain)
+            .animation(.easeInOut(duration: 0.2), value: viewModel.results.count)
             .overlay {
                 if viewModel.isSearching {
                     ProgressView()
@@ -63,6 +64,39 @@ struct AddRestaurantSearchView: View {
                 }
             }
         }
+    }
+
+    private func resultCard(_ item: MKMapItem) -> some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(.orange.gradient)
+                Image(systemName: "fork.knife")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 36, height: 36)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.name ?? "Unbekanntes Restaurant")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                if let address = item.placemark.title {
+                    Text(address)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(12)
+        .background(.background.secondary, in: .rect(cornerRadius: 14))
     }
 
     private func performSearch() {
