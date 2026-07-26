@@ -6,6 +6,7 @@ struct MapView: View {
     @ObservedObject var locationManager: LocationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedRestaurant: RestaurantSummary?
+    @State private var searchSheetDetent: PresentationDetent = .medium
 
     var body: some View {
         Map(position: $cameraPosition, selection: $viewModel.selectedPinID) {
@@ -48,9 +49,14 @@ struct MapView: View {
         }
         .sheet(isPresented: $viewModel.isSearchSheetPresented) {
             SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.medium, .large], selection: $searchSheetDetent)
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                .presentationBackground(
+                    searchSheetDetent == .medium
+                        ? AnyShapeStyle(.ultraThinMaterial)
+                        : AnyShapeStyle(Color(.systemGroupedBackground))
+                )
         }
         .task {
             locationManager.requestAuthorization()

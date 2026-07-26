@@ -31,6 +31,7 @@ struct SearchResultsSheet: View {
                 resultsSectionContent
             }
         }
+        .scrollContentBackground(.hidden)
         .onChange(of: viewModel.searchText) {
             performSearch()
         }
