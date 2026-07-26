@@ -40,9 +40,12 @@ struct SearchResultsSheet: View {
             performSearch()
         }
         .onChange(of: locationManager.locationUpdateCount) {
-            if viewModel.isSearchActive {
+            if viewModel.searchScope == .nearby {
                 performSearch()
             }
+        }
+        .task {
+            performSearch()
         }
         .sheet(item: $selectedRestaurant) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
@@ -100,21 +103,25 @@ struct SearchResultsSheet: View {
 
     @ViewBuilder
     private var resultsContent: some View {
-        if !viewModel.isSearchActive {
-            Spacer()
-            ContentUnavailableView {
-                Label("Gericht suchen", systemImage: "fork.knife")
-            } description: {
-                Text("Suche nach einem Gericht, z. B. „Ramen“ oder „Döner“.")
-            }
-            Spacer()
-        } else if viewModel.isSearching {
+        if viewModel.isSearching {
             Spacer()
             ProgressView()
             Spacer()
-        } else if viewModel.showsNoResultsHint {
+        } else if viewModel.searchResults.isEmpty {
             Spacer()
-            ContentUnavailableView.search(text: viewModel.searchText)
+            if viewModel.isSearchActive {
+                ContentUnavailableView.search(text: viewModel.searchText)
+            } else {
+                ContentUnavailableView {
+                    Label("Noch keine Bewertungen", systemImage: "fork.knife")
+                } description: {
+                    Text(
+                        viewModel.searchScope == .global
+                            ? "Sobald irgendwo Gerichte bewertet wurden, siehst du hier die bestbewerteten."
+                            : "Sobald in diesem Umkreis Gerichte bewertet wurden, siehst du hier die bestbewerteten."
+                    )
+                }
+            }
             Spacer()
         } else {
             List(viewModel.searchResults) { result in

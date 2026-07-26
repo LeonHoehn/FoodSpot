@@ -13,7 +13,7 @@ struct MapView: View {
 
             ForEach(viewModel.displayedPins) { pin in
                 Marker(pin.name, coordinate: pin.coordinate)
-                    .tint(viewModel.isSearchActive ? .orange : .accentColor)
+                    .tint(viewModel.isSearchSheetPresented ? .orange : .accentColor)
                     .tag(pin.id)
             }
         }
@@ -72,7 +72,7 @@ struct MapView: View {
                 Spacer()
             }
             .padding(12)
-            .background(.thickMaterial, in: .rect(cornerRadius: 14))
+            .glassCapsuleBackground()
             .padding(.horizontal, 16)
         }
         .buttonStyle(.plain)
@@ -105,6 +105,19 @@ struct MapView: View {
             .background(.thinMaterial, in: .rect(cornerRadius: 10))
             .padding(.top, 8)
             .padding(.horizontal, 16)
+    }
+}
+
+private extension View {
+    /// Liquid-Glass-Optik (iOS 26+) wie bei den nativen Map-Controls,
+    /// mit Material-Fallback für ältere Systeme.
+    @ViewBuilder
+    func glassCapsuleBackground() -> some View {
+        if #available(iOS 26.0, *) {
+            self.glassEffect(.regular, in: .capsule)
+        } else {
+            self.background(.thickMaterial, in: .capsule)
+        }
     }
 }
 

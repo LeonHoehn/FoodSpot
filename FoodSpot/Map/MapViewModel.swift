@@ -23,19 +23,15 @@ final class MapViewModel: ObservableObject {
     }
 
     var displayedPins: [MapPin] {
-        isSearchActive ? searchResults.map(\.asMapPin) : restaurants.map(\.asMapPin)
-    }
-
-    var showsNoResultsHint: Bool {
-        isSearchActive && !isSearching && searchResults.isEmpty
+        isSearchSheetPresented ? searchResults.map(\.asMapPin) : restaurants.map(\.asMapPin)
     }
 
     var showsEmptyMapHint: Bool {
-        !isSearchActive && !isLoading && restaurants.isEmpty
+        !isSearchSheetPresented && !isLoading && restaurants.isEmpty
     }
 
     func restaurantSummary(for pinID: MapPin.ID) -> RestaurantSummary? {
-        if isSearchActive {
+        if isSearchSheetPresented {
             return searchResults.first { $0.restaurantId == pinID }?.summary
         } else {
             return restaurants.first { $0.id == pinID }?.summary
@@ -53,14 +49,11 @@ final class MapViewModel: ObservableObject {
         }
     }
 
+    /// Ohne Sucheingabe wird trotzdem gesucht (leerer Query) - die RPCs
+    /// liefern dann die bestbewerteten Gerichte ohne Namensfilter, damit
+    /// man beim Öffnen des Sheets direkt etwas zum Stöbern sieht.
     func performSearch(near coordinate: CLLocationCoordinate2D?, isAuthorizationDenied: Bool = false) {
         searchTask?.cancel()
-
-        guard isSearchActive else {
-            searchResults = []
-            errorMessage = nil
-            return
-        }
 
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
 
