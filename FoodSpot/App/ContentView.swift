@@ -20,39 +20,34 @@ private struct HomeView: View {
     @State private var isShowingAddRestaurant = false
     @State private var restaurantPendingRating: RestaurantSummary?
     @State private var addRestaurantErrorMessage: String?
-
-    private static let radiusOptions: [Double] = [1, 2, 5, 10, 20]
+    @State private var isShowingProfile = false
 
     var body: some View {
-        TabView {
-            NavigationStack {
-                MapView(viewModel: mapViewModel, locationManager: locationManager)
-                    .navigationTitle("FoodSpot")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            radiusMenu
+        NavigationStack {
+            MapView(viewModel: mapViewModel, locationManager: locationManager)
+                .navigationTitle("FoodSpot")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            isShowingProfile = true
+                        } label: {
+                            Image(systemName: "person.crop.circle")
                         }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                isShowingAddRestaurant = true
-                            } label: {
-                                Image(systemName: "plus")
-                            }
-                            .accessibilityLabel("Restaurant hinzufügen")
-                        }
+                        .accessibilityLabel("Profil")
                     }
-            }
-            .tabItem {
-                Label("Karte", systemImage: "map")
-            }
-
-            NavigationStack {
-                ProfileView(locationManager: locationManager)
-            }
-            .tabItem {
-                Label("Profil", systemImage: "person.crop.circle")
-            }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isShowingAddRestaurant = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        .accessibilityLabel("Restaurant hinzufügen")
+                    }
+                }
+                .navigationDestination(isPresented: $isShowingProfile) {
+                    ProfileView(locationManager: locationManager)
+                }
         }
         .sheet(isPresented: $isShowingAddRestaurant) {
             AddRestaurantSearchView(locationManager: locationManager) { mapItem in
@@ -72,24 +67,6 @@ private struct HomeView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(addRestaurantErrorMessage ?? "")
-        }
-    }
-
-    private var radiusMenu: some View {
-        Menu {
-            ForEach(Self.radiusOptions, id: \.self) { km in
-                Button {
-                    mapViewModel.radiusKm = km
-                } label: {
-                    if mapViewModel.radiusKm == km {
-                        Label("\(Int(km)) km", systemImage: "checkmark")
-                    } else {
-                        Text("\(Int(km)) km")
-                    }
-                }
-            }
-        } label: {
-            Label("\(Int(mapViewModel.radiusKm)) km", systemImage: "location.circle")
         }
     }
 
