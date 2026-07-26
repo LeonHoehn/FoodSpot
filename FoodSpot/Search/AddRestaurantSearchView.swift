@@ -3,7 +3,7 @@ import MapKit
 import SwiftUI
 
 struct AddRestaurantSearchView: View {
-    let userLocation: CLLocationCoordinate2D?
+    @ObservedObject var locationManager: LocationManager
     let onSelect: (MKMapItem) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -38,13 +38,22 @@ struct AddRestaurantSearchView: View {
             .overlay {
                 if viewModel.isSearching {
                     ProgressView()
-                } else if viewModel.results.isEmpty && !viewModel.query.isEmpty {
+                } else if viewModel.query.isEmpty {
+                    ContentUnavailableView {
+                        Label("Restaurant suchen", systemImage: "magnifyingglass")
+                    } description: {
+                        Text("Suche nach dem Namen eines Restaurants in deiner Nähe.")
+                    }
+                } else if viewModel.results.isEmpty && viewModel.errorMessage == nil {
                     ContentUnavailableView.search(text: viewModel.query)
                 }
             }
             .searchable(text: $viewModel.query, prompt: "Restaurant suchen")
             .onChange(of: viewModel.query) {
-                viewModel.scheduleSearch(near: userLocation)
+                performSearch()
+            }
+            .onChange(of: locationManager.locationUpdateCount) {
+                performSearch()
             }
             .navigationTitle("Restaurant finden")
             .navigationBarTitleDisplayMode(.inline)
@@ -54,5 +63,12 @@ struct AddRestaurantSearchView: View {
                 }
             }
         }
+    }
+
+    private func performSearch() {
+        viewModel.scheduleSearch(
+            near: locationManager.currentLocation,
+            isAuthorizationDenied: locationManager.isAuthorizationDenied
+        )
     }
 }

@@ -44,11 +44,12 @@ private struct HomeView: View {
                         } label: {
                             Image(systemName: "plus")
                         }
+                        .accessibilityLabel("Restaurant hinzufügen")
                     }
                 }
         }
         .sheet(isPresented: $isShowingAddRestaurant) {
-            AddRestaurantSearchView(userLocation: locationManager.currentLocation) { mapItem in
+            AddRestaurantSearchView(locationManager: locationManager) { mapItem in
                 Task { await handleRestaurantSelected(mapItem) }
             }
         }

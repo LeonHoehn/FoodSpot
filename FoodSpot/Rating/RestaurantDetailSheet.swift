@@ -28,8 +28,8 @@ struct RestaurantDetailSheet: View {
                     .padding(.vertical, 4)
                 }
 
-                if let restaurantAverage = viewModel.restaurantAverage {
-                    Section("Restaurant") {
+                Section("Restaurant") {
+                    if let restaurantAverage = viewModel.restaurantAverage {
                         RatingBlockSummaryView(
                             categories: [
                                 ("Service", restaurantAverage.avgService),
@@ -40,13 +40,30 @@ struct RestaurantDetailSheet: View {
                             overall: restaurantAverage.avgOverall,
                             ratingCount: restaurantAverage.ratingCount
                         )
+                    } else if viewModel.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    } else {
+                        Text("Noch keine Restaurant-Bewertung.")
+                            .foregroundStyle(.secondary)
                     }
                 }
 
                 Section("Bewertete Gerichte") {
                     if viewModel.dishAverages.isEmpty {
-                        Text(viewModel.isLoading ? "Lädt…" : "Noch keine bewerteten Gerichte.")
-                            .foregroundStyle(.secondary)
+                        if viewModel.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else {
+                            Text("Noch keine bewerteten Gerichte.")
+                                .foregroundStyle(.secondary)
+                        }
                     }
 
                     ForEach(viewModel.dishAverages) { dish in

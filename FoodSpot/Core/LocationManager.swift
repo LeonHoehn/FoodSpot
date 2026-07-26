@@ -26,6 +26,10 @@ final class LocationManager: NSObject, ObservableObject {
         guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else { return }
         manager.requestLocation()
     }
+
+    var isAuthorizationDenied: Bool {
+        authorizationStatus == .denied || authorizationStatus == .restricted
+    }
 }
 
 extension LocationManager: CLLocationManagerDelegate {

@@ -11,7 +11,7 @@ struct RatingFormView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Gericht") {
+                Section {
                     TextField("z. B. Ramen, Döner, Kaiserschmarrn", text: $viewModel.dishQuery)
                         .textInputAutocapitalization(.words)
                         .disableAutocorrection(true)
@@ -21,6 +21,10 @@ struct RatingFormView: View {
                             viewModel.dishQuery = entry.name
                         }
                     }
+                } header: {
+                    Text("Gericht")
+                } footer: {
+                    Text("Wähle einen Vorschlag oder tippe frei einen Namen ein, falls dein Gericht nicht dabei ist.")
                 }
 
                 // Die beiden Bewertungsblöcke bleiben strikt getrennt: nie

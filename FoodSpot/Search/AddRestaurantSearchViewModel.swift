@@ -12,12 +12,18 @@ final class AddRestaurantSearchViewModel: ObservableObject {
     private let searchService = RestaurantSearchService()
     private var searchTask: Task<Void, Never>?
 
-    func scheduleSearch(near coordinate: CLLocationCoordinate2D?) {
+    func scheduleSearch(near coordinate: CLLocationCoordinate2D?, isAuthorizationDenied: Bool = false) {
         searchTask?.cancel()
 
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             results = []
+            errorMessage = nil
+            return
+        }
+
+        if isAuthorizationDenied {
+            errorMessage = "Standortzugriff verweigert – aktiviere ihn in den Einstellungen, um Restaurants in deiner Nähe zu finden."
             return
         }
 

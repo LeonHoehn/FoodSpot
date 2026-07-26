@@ -32,17 +32,19 @@ struct MapView: View {
         .overlay {
             if (viewModel.isLoading && viewModel.restaurants.isEmpty) || viewModel.isSearching {
                 ProgressView()
+            } else if viewModel.showsEmptyMapHint {
+                emptyMapHint
             }
         }
         .onChange(of: viewModel.searchText) {
-            viewModel.scheduleSearch(near: locationManager.currentLocation)
+            performSearch()
         }
         .onChange(of: viewModel.radiusKm) {
-            viewModel.scheduleSearch(near: locationManager.currentLocation)
+            performSearch()
         }
         .onChange(of: locationManager.locationUpdateCount) {
             if viewModel.isSearchActive {
-                viewModel.scheduleSearch(near: locationManager.currentLocation)
+                performSearch()
             }
         }
         .onChange(of: viewModel.selectedPinID) { _, newValue in
@@ -57,6 +59,31 @@ struct MapView: View {
             locationManager.requestLocation()
             await viewModel.loadRestaurants()
         }
+    }
+
+    private func performSearch() {
+        viewModel.scheduleSearch(
+            near: locationManager.currentLocation,
+            isAuthorizationDenied: locationManager.isAuthorizationDenied
+        )
+    }
+
+    private var emptyMapHint: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "fork.knife.circle")
+                .font(.largeTitle)
+                .foregroundStyle(.secondary)
+            Text("Noch keine Restaurants in der Nähe")
+                .font(.headline)
+            Text("Tippe oben rechts auf „+“, um dein erstes Restaurant hinzuzufügen.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(20)
+        .background(.thinMaterial, in: .rect(cornerRadius: 16))
+        .padding(.horizontal, 40)
+        .allowsHitTesting(false)
     }
 
     private func hintBanner(_ text: String) -> some View {

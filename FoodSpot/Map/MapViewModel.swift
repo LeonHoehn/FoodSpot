@@ -28,6 +28,10 @@ final class MapViewModel: ObservableObject {
         isSearchActive && !isSearching && searchResults.isEmpty
     }
 
+    var showsEmptyMapHint: Bool {
+        !isSearchActive && !isLoading && restaurants.isEmpty
+    }
+
     func restaurantSummary(for pinID: MapPin.ID) -> RestaurantSummary? {
         if isSearchActive {
             return searchResults.first { $0.restaurantId == pinID }?.summary
@@ -47,12 +51,17 @@ final class MapViewModel: ObservableObject {
         }
     }
 
-    func scheduleSearch(near coordinate: CLLocationCoordinate2D?) {
+    func scheduleSearch(near coordinate: CLLocationCoordinate2D?, isAuthorizationDenied: Bool = false) {
         searchTask?.cancel()
 
         guard isSearchActive else {
             searchResults = []
             errorMessage = nil
+            return
+        }
+
+        if isAuthorizationDenied {
+            errorMessage = "Standortzugriff verweigert – aktiviere ihn in den Einstellungen, um nach Gerichten in deiner Nähe zu suchen."
             return
         }
 
