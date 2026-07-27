@@ -79,7 +79,11 @@ struct MapView: View {
             return
         }
 
-        guard let feature = newValue.feature, feature.pointOfInterestCategory == .restaurant else {
+        guard
+            let feature = newValue.feature,
+            let category = feature.pointOfInterestCategory,
+            MKPointOfInterestCategory.foodAndDrink.contains(category)
+        else {
             selection = nil
             return
         }
