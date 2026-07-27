@@ -7,6 +7,7 @@ struct MapView: View {
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selection: MapSelection<MapPin.ID>?
     @State private var selectedRestaurant: RestaurantSummary?
+    @State private var pendingMapItem: MKMapItem?
     @State private var searchSheetDetent: PresentationDetent = .medium
 
     var body: some View {
@@ -50,9 +51,18 @@ struct MapView: View {
         }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
         }
-        .sheet(isPresented: $viewModel.isShowingAddRestaurant) {
-            AddRestaurantSearchView(locationManager: locationManager) { mapItem in
+        .sheet(isPresented: $viewModel.isShowingAddRestaurant, onDismiss: {
+            // Erst NACHDEM dieses Sheet vollständig geschlossen ist das
+            // nächste (RestaurantDetailSheet) öffnen - zwei Sheets
+            // gleichzeitig zu präsentieren/schließen kann die SwiftUI-
+            // Sheet-Verwaltung zum Hängen bringen.
+            if let mapItem = pendingMapItem {
+                pendingMapItem = nil
                 Task { await handleAddedRestaurant(mapItem) }
+            }
+        }) {
+            AddRestaurantSearchView(locationManager: locationManager) { mapItem in
+                pendingMapItem = mapItem
             }
         }
         .sheet(isPresented: $viewModel.isSearchSheetPresented) {
