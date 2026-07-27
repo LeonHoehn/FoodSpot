@@ -74,7 +74,7 @@ private struct HomeView: View {
     private func handleRestaurantSelected(_ mapItem: MKMapItem) async {
         do {
             let restaurant = try await RestaurantRepository().findOrCreate(mapItem: mapItem)
-            await mapViewModel.loadRestaurants()
+            await mapViewModel.loadPins()
             restaurantPendingRating = restaurant.summary
         } catch {
             addRestaurantErrorMessage = error.localizedDescription

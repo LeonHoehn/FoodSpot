@@ -23,12 +23,15 @@ struct BookmarkedRestaurant: Codable, Identifiable {
 }
 
 extension BookmarkedRestaurant {
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: restaurant.lat, longitude: restaurant.lng)
+    }
+
     var summary: RestaurantSummary {
-        RestaurantSummary(
-            id: restaurantId,
-            name: restaurant.name,
-            address: restaurant.address,
-            coordinate: CLLocationCoordinate2D(latitude: restaurant.lat, longitude: restaurant.lng)
-        )
+        RestaurantSummary(id: restaurantId, name: restaurant.name, address: restaurant.address, coordinate: coordinate)
+    }
+
+    var asMapPin: MapPin {
+        MapPin(id: restaurantId, name: restaurant.name, coordinate: coordinate, kind: .bookmarked)
     }
 }

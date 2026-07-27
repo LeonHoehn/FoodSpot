@@ -1,9 +1,11 @@
 import CoreLocation
 import Foundation
+import MapKit
 
 @MainActor
 final class MapViewModel: ObservableObject {
     @Published private(set) var restaurants: [Restaurant] = []
+    @Published private(set) var bookmarks: [BookmarkedRestaurant] = []
     @Published private(set) var searchResults: [DishSearchResult] = []
     @Published var searchText = ""
     @Published var searchScope: SearchScope = .nearby
@@ -11,10 +13,11 @@ final class MapViewModel: ObservableObject {
     @Published var isSearchSheetPresented = false
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
+    @Published private(set) var isResolvingMapFeature = false
     @Published var errorMessage: String?
-    @Published var selectedPinID: MapPin.ID?
 
     private let restaurantRepository = RestaurantRepository()
+    private let bookmarksRepository = BookmarksRepository()
     private let dishSearchRepository = DishSearchRepository()
     private var searchTask: Task<Void, Never>?
 
@@ -22,30 +25,63 @@ final class MapViewModel: ObservableObject {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Öffentliche "hat Bewertungen"-Pins + private, nur für den eigenen
+    /// Nutzer sichtbare Merkliste-Pins (dedupliziert, falls beides zutrifft).
     var displayedPins: [MapPin] {
-        isSearchSheetPresented ? searchResults.map(\.asMapPin) : restaurants.map(\.asMapPin)
+        if isSearchSheetPresented {
+            return searchResults.map(\.asMapPin)
+        }
+
+        var pins = restaurants.map(\.asMapPin)
+        let ratedIds = Set(restaurants.map(\.id))
+        for bookmark in bookmarks where !ratedIds.contains(bookmark.restaurantId) {
+            pins.append(bookmark.asMapPin)
+        }
+        return pins
     }
 
     var showsEmptyMapHint: Bool {
-        !isSearchSheetPresented && !isLoading && restaurants.isEmpty
+        !isSearchSheetPresented && !isLoading && restaurants.isEmpty && bookmarks.isEmpty
     }
 
     func restaurantSummary(for pinID: MapPin.ID) -> RestaurantSummary? {
         if isSearchSheetPresented {
             return searchResults.first { $0.restaurantId == pinID }?.summary
-        } else {
-            return restaurants.first { $0.id == pinID }?.summary
         }
+        if let restaurant = restaurants.first(where: { $0.id == pinID }) {
+            return restaurant.summary
+        }
+        return bookmarks.first { $0.restaurantId == pinID }?.summary
     }
 
-    func loadRestaurants() async {
+    func loadPins() async {
         isLoading = true
         defer { isLoading = false }
 
         do {
-            restaurants = try await restaurantRepository.fetchAll()
+            async let ratedTask = restaurantRepository.fetchRated()
+            async let bookmarksTask = bookmarksRepository.fetchAll()
+            restaurants = try await ratedTask
+            bookmarks = try await bookmarksTask
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    /// Antippen eines von Apple selbst auf der Karte angezeigten
+    /// Restaurant-POIs (nicht unserer eigenen Pins): legt beim ersten Mal
+    /// einen lokalen Eintrag an, genau wie die "+"-Suche.
+    func resolveRestaurant(from mapItem: MKMapItem) async -> RestaurantSummary? {
+        isResolvingMapFeature = true
+        errorMessage = nil
+        defer { isResolvingMapFeature = false }
+
+        do {
+            let restaurant = try await restaurantRepository.findOrCreate(mapItem: mapItem)
+            return restaurant.summary
+        } catch {
+            errorMessage = error.localizedDescription
+            return nil
         }
     }
 

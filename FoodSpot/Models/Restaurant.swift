@@ -25,7 +25,7 @@ extension Restaurant {
     }
 
     var asMapPin: MapPin {
-        MapPin(id: id, name: name, coordinate: coordinate)
+        MapPin(id: id, name: name, coordinate: coordinate, kind: .rated)
     }
 
     var summary: RestaurantSummary {

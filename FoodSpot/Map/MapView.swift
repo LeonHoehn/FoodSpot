@@ -5,16 +5,17 @@ struct MapView: View {
     @ObservedObject var viewModel: MapViewModel
     @ObservedObject var locationManager: LocationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    @State private var selection: MapSelection<MapPin.ID>?
     @State private var selectedRestaurant: RestaurantSummary?
     @State private var searchSheetDetent: PresentationDetent = .medium
 
     var body: some View {
-        Map(position: $cameraPosition, selection: $viewModel.selectedPinID) {
+        Map(position: $cameraPosition, selection: $selection) {
             UserAnnotation()
 
             ForEach(viewModel.displayedPins) { pin in
                 Marker(pin.name, coordinate: pin.coordinate)
-                    .tint(viewModel.isSearchSheetPresented ? .orange : .accentColor)
+                    .tint(tintColor(for: pin.kind))
                     .tag(pin.id)
             }
         }
@@ -28,7 +29,7 @@ struct MapView: View {
             }
         }
         .overlay {
-            if viewModel.isLoading && viewModel.restaurants.isEmpty {
+            if (viewModel.isLoading && viewModel.restaurants.isEmpty) || viewModel.isResolvingMapFeature {
                 ProgressView()
             } else if viewModel.showsEmptyMapHint {
                 emptyMapHint
@@ -40,11 +41,13 @@ struct MapView: View {
                     .padding(.bottom, 8)
             }
         }
-        .onChange(of: viewModel.selectedPinID) { _, newValue in
-            guard let id = newValue else { return }
-            selectedRestaurant = viewModel.restaurantSummary(for: id)
+        .onChange(of: selection) { _, newValue in
+            handleSelection(newValue)
         }
-        .sheet(item: $selectedRestaurant, onDismiss: { viewModel.selectedPinID = nil }) { restaurant in
+        .sheet(item: $selectedRestaurant, onDismiss: {
+            selection = nil
+            Task { await viewModel.loadPins() }
+        }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
         }
         .sheet(isPresented: $viewModel.isSearchSheetPresented) {
@@ -61,7 +64,47 @@ struct MapView: View {
         .task {
             locationManager.requestAuthorization()
             locationManager.requestLocation()
-            await viewModel.loadRestaurants()
+            await viewModel.loadPins()
+        }
+    }
+
+    /// Eigene Pins (getaggt) landen als `.value`, native Apple-Maps-POI-Taps
+    /// als `.feature`. Bei Letzterem wird bei Bedarf ein lokaler Eintrag
+    /// angelegt - genau wie über die "+"-Suche, nur direkt auf der Karte.
+    private func handleSelection(_ newValue: MapSelection<MapPin.ID>?) {
+        guard let newValue else { return }
+
+        if let pinID = newValue.value {
+            selectedRestaurant = viewModel.restaurantSummary(for: pinID)
+            return
+        }
+
+        guard let feature = newValue.feature, feature.pointOfInterestCategory == .restaurant else {
+            selection = nil
+            return
+        }
+
+        Task {
+            do {
+                let request = MKMapItemRequest(feature: feature)
+                let mapItem = try await request.mapItem
+                if let restaurant = await viewModel.resolveRestaurant(from: mapItem) {
+                    selectedRestaurant = restaurant
+                } else {
+                    selection = nil
+                }
+            } catch {
+                viewModel.errorMessage = error.localizedDescription
+                selection = nil
+            }
+        }
+    }
+
+    private func tintColor(for kind: MapPin.Kind) -> Color {
+        switch kind {
+        case .rated: viewModel.isSearchSheetPresented ? .orange : .accentColor
+        case .bookmarked: .purple
+        case .searchResult: .orange
         }
     }
 
@@ -91,7 +134,7 @@ struct MapView: View {
                 .foregroundStyle(.secondary)
             Text("Noch keine Restaurants in der Nähe")
                 .font(.headline)
-            Text("Tippe oben rechts auf „+“, um dein erstes Restaurant hinzuzufügen.")
+            Text("Tippe auf ein Restaurant-Icon auf der Karte oder oben rechts auf „+“, um loszulegen.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

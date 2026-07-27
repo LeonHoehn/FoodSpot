@@ -24,9 +24,11 @@ struct RestaurantRepository {
 
     private let client = SupabaseManager.shared.client
 
-    func fetchAll() async throws -> [Restaurant] {
+    /// Nur Restaurants mit mindestens einer Bewertung - für die
+    /// öffentlich sichtbaren Kartenpins.
+    func fetchRated() async throws -> [Restaurant] {
         try await client
-            .from("restaurants")
+            .from("rated_restaurants")
             .select("id, apple_maps_id, name, lat, lng, address")
             .execute()
             .value
