@@ -50,6 +50,11 @@ struct MapView: View {
         }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
         }
+        .sheet(isPresented: $viewModel.isShowingAddRestaurant) {
+            AddRestaurantSearchView(locationManager: locationManager) { mapItem in
+                Task { await handleAddedRestaurant(mapItem) }
+            }
+        }
         .sheet(isPresented: $viewModel.isSearchSheetPresented) {
             SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
                 .presentationDetents([.medium, .large], selection: $searchSheetDetent)
@@ -102,6 +107,23 @@ struct MapView: View {
                 selection = nil
             }
         }
+    }
+
+    /// Treffer aus der "+"-Suche verhält sich wie ein Tap auf der Karte:
+    /// erst dorthin zentrieren (Apples eigenes POI-Icon wird dort sichtbar),
+    /// dann dieselbe Detailseite mit Merken/Bewerten öffnen.
+    private func handleAddedRestaurant(_ mapItem: MKMapItem) async {
+        guard let restaurant = await viewModel.resolveRestaurant(from: mapItem) else { return }
+        withAnimation {
+            cameraPosition = .region(
+                MKCoordinateRegion(
+                    center: restaurant.coordinate,
+                    latitudinalMeters: 600,
+                    longitudinalMeters: 600
+                )
+            )
+        }
+        selectedRestaurant = restaurant
     }
 
     private func tintColor(for kind: MapPin.Kind) -> Color {

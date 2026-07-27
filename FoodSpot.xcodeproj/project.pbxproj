@@ -64,14 +64,14 @@
 		3A5E18B6F2EE644786298D51 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		3FA63E76BE9D5E2FFE76536D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		45A53C6085D502770682BE33 /* RestaurantDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailSheet.swift; sourceTree = "<group>"; };
-		4755407744E4B83D360622CD /* FoodSpot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4755407744E4B83D360622CD /* FoodSpot.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FoodSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5050687B01306A38643D4985 /* DishRatingAverage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishRatingAverage.swift; sourceTree = "<group>"; };
 		5F76869786188C43BD36BF90 /* Rating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rating.swift; sourceTree = "<group>"; };
 		62883C028D1E26FC2C8F4E47 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		634DAD38D4FF08BBADC120B2 /* RatingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingRepository.swift; sourceTree = "<group>"; };
 		69C516F54639208B82E9562C /* RestaurantSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantSummary.swift; sourceTree = "<group>"; };
 		752EE42B46022C461F3C9A8B /* DishSearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishSearchResult.swift; sourceTree = "<group>"; };
-		76F3F88C4127121ED1BCC577 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		76F3F88C4127121ED1BCC577 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		77EAC1AA3F420025A27E2717 /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		7A42C8570843935214A28C4E /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8486ECA9C6F0C9ABA0E24987 /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
@@ -293,6 +293,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 636CD5E90F5C4A0E5A934E43 /* Build configuration list for PBXProject "FoodSpot" */;
 			developmentRegion = en;
@@ -506,7 +508,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = M57YK7HZK8;
 				INFOPLIST_FILE = FoodSpot/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -527,7 +528,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = M57YK7HZK8;
 				INFOPLIST_FILE = FoodSpot/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

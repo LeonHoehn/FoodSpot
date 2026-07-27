@@ -11,6 +11,7 @@ final class MapViewModel: ObservableObject {
     @Published var searchScope: SearchScope = .nearby
     @Published var radiusKm: Double = 5
     @Published var isSearchSheetPresented = false
+    @Published var isShowingAddRestaurant = false
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
     @Published private(set) var isResolvingMapFeature = false

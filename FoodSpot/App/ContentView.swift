@@ -1,4 +1,3 @@
-import MapKit
 import SwiftUI
 
 struct ContentView: View {
@@ -17,9 +16,6 @@ private struct HomeView: View {
     @StateObject private var mapViewModel = MapViewModel()
     @StateObject private var locationManager = LocationManager()
 
-    @State private var isShowingAddRestaurant = false
-    @State private var restaurantPendingRating: RestaurantSummary?
-    @State private var addRestaurantErrorMessage: String?
     @State private var isShowingProfile = false
 
     var body: some View {
@@ -38,7 +34,7 @@ private struct HomeView: View {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            isShowingAddRestaurant = true
+                            mapViewModel.isShowingAddRestaurant = true
                         } label: {
                             Image(systemName: "plus")
                         }
@@ -48,36 +44,6 @@ private struct HomeView: View {
                 .navigationDestination(isPresented: $isShowingProfile) {
                     ProfileView(locationManager: locationManager)
                 }
-        }
-        .sheet(isPresented: $isShowingAddRestaurant) {
-            AddRestaurantSearchView(locationManager: locationManager) { mapItem in
-                Task { await handleRestaurantSelected(mapItem) }
-            }
-        }
-        .sheet(item: $restaurantPendingRating) { restaurant in
-            RatingFormView(restaurant: restaurant)
-        }
-        .alert(
-            "Restaurant konnte nicht angelegt werden",
-            isPresented: Binding(
-                get: { addRestaurantErrorMessage != nil },
-                set: { if !$0 { addRestaurantErrorMessage = nil } }
-            )
-        ) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(addRestaurantErrorMessage ?? "")
-        }
-    }
-
-    @MainActor
-    private func handleRestaurantSelected(_ mapItem: MKMapItem) async {
-        do {
-            let restaurant = try await RestaurantRepository().findOrCreate(mapItem: mapItem)
-            await mapViewModel.loadPins()
-            restaurantPendingRating = restaurant.summary
-        } catch {
-            addRestaurantErrorMessage = error.localizedDescription
         }
     }
 }
