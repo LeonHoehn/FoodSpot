@@ -22,6 +22,16 @@ final class MapViewModel: ObservableObject {
     /// Pin-Hervorhebung und dieselbe Detailseite.
     @Published var selection: MapSelection<MapPin.ID>?
     @Published var selectedRestaurant: RestaurantSummary?
+    /// Detent der RestaurantDetailSheet - wird von jedem Auswahl-Pfad (Karten-
+    /// Tap, Such-Tap, "+"-Suche) auf `.medium` zurückgesetzt, damit die
+    /// Kamera-Zentrierung zuverlässig weiß, ob die Karte gerade halb verdeckt
+    /// ist.
+    @Published var detailSheetDetent: PresentationDetent = .medium
+    /// Restaurant, das gerade per "+"-Suche angelegt/ausgewählt wurde und
+    /// deshalb (noch) nicht zwingend in `restaurants` auftaucht - wird
+    /// trotzdem als Pin angezeigt, damit die Auswahl-Hervorhebung sichtbar
+    /// "aufpoppt", genau wie bei einem normalen Karten-Tap.
+    @Published var focusedRestaurant: RestaurantSummary?
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
     @Published private(set) var isResolvingMapFeature = false
@@ -39,21 +49,26 @@ final class MapViewModel: ObservableObject {
     /// Öffentliche "hat Bewertungen"-Pins + private, nur für den eigenen
     /// Nutzer sichtbare Merkliste-Pins (dedupliziert, falls beides zutrifft).
     var displayedPins: [MapPin] {
+        var pins: [MapPin]
+
         if isShowingAddRestaurant, !restaurantSearchResults.isEmpty {
-            return restaurantSearchResults.map { item in
+            pins = restaurantSearchResults.map { item in
                 MapPin(id: UUID(), name: item.name ?? "Unbekanntes Restaurant", coordinate: item.placemark.coordinate, kind: .searchResult)
+            }
+        } else if isSearchSheetPresented {
+            pins = searchResults.map(\.asMapPin)
+        } else {
+            pins = restaurants.map(\.asMapPin)
+            let ratedIds = Set(restaurants.map(\.id))
+            for bookmark in bookmarks where !ratedIds.contains(bookmark.restaurantId) {
+                pins.append(bookmark.asMapPin)
             }
         }
 
-        if isSearchSheetPresented {
-            return searchResults.map(\.asMapPin)
+        if let focused = focusedRestaurant, !pins.contains(where: { $0.id == focused.id }) {
+            pins.append(MapPin(id: focused.id, name: focused.name, coordinate: focused.coordinate, kind: .searchResult))
         }
 
-        var pins = restaurants.map(\.asMapPin)
-        let ratedIds = Set(restaurants.map(\.id))
-        for bookmark in bookmarks where !ratedIds.contains(bookmark.restaurantId) {
-            pins.append(bookmark.asMapPin)
-        }
         return pins
     }
 

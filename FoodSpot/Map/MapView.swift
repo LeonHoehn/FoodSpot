@@ -45,13 +45,19 @@ struct MapView: View {
             handleSelection(newValue)
         }
         .onChange(of: viewModel.searchResults) { _, results in
+            // Bei "Umgebung" bleibt die Kamera bewusst auf der Nutzer-Location
+            // zentriert - nur die globale Suche zoomt auf die Bounding-Box
+            // aller Treffer, da man dort über größere Distanzen sucht.
+            guard viewModel.searchScope == .global else { return }
             fitCamera(to: results.map(\.coordinate))
         }
         .sheet(item: $viewModel.selectedRestaurant, onDismiss: {
             viewModel.selection = nil
+            viewModel.focusedRestaurant = nil
             Task { await viewModel.loadPins() }
         }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
+                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
         }
         .sheet(isPresented: $viewModel.isShowingAddRestaurant, onDismiss: {
             viewModel.restaurantSearchResults = []
@@ -104,6 +110,7 @@ struct MapView: View {
         guard let newValue else { return }
 
         if let pinID = newValue.value {
+            viewModel.detailSheetDetent = .medium
             viewModel.selectedRestaurant = viewModel.restaurantSummary(for: pinID)
             return
         }
@@ -122,6 +129,7 @@ struct MapView: View {
                 let request = MKMapItemRequest(feature: feature)
                 let mapItem = try await request.mapItem
                 if let restaurant = await viewModel.resolveRestaurant(from: mapItem) {
+                    viewModel.detailSheetDetent = .medium
                     viewModel.selectedRestaurant = restaurant
                 } else {
                     viewModel.selection = nil
@@ -138,17 +146,21 @@ struct MapView: View {
     /// dann dieselbe Detailseite mit Merken/Bewerten öffnen.
     private func handleAddedRestaurant(_ mapItem: MKMapItem) async {
         guard let restaurant = await viewModel.resolveRestaurant(from: mapItem) else { return }
+        viewModel.focusedRestaurant = restaurant
+        viewModel.detailSheetDetent = .medium
+        viewModel.selection = MapSelection(restaurant.id)
+        viewModel.selectedRestaurant = restaurant
         withAnimation {
             cameraPosition = .region(
-                MKCoordinateRegion(
-                    center: restaurant.coordinate,
-                    latitudinalMeters: 600,
-                    longitudinalMeters: 600
+                centerRegion(
+                    MKCoordinateRegion(
+                        center: restaurant.coordinate,
+                        latitudinalMeters: 600,
+                        longitudinalMeters: 600
+                    )
                 )
             )
         }
-        viewModel.selection = MapSelection(restaurant.id)
-        viewModel.selectedRestaurant = restaurant
     }
 
     /// Zoomt/fliegt so, dass alle übergebenen Koordinaten sichtbar sind
@@ -160,7 +172,7 @@ struct MapView: View {
         if coordinates.count == 1, let only = coordinates.first {
             withAnimation {
                 cameraPosition = .region(
-                    MKCoordinateRegion(center: only, latitudinalMeters: 800, longitudinalMeters: 800)
+                    centerRegion(MKCoordinateRegion(center: only, latitudinalMeters: 800, longitudinalMeters: 800))
                 )
             }
             return
@@ -180,8 +192,29 @@ struct MapView: View {
         )
 
         withAnimation {
-            cameraPosition = .region(MKCoordinateRegion(center: center, span: span))
+            cameraPosition = .region(centerRegion(MKCoordinateRegion(center: center, span: span)))
         }
+    }
+
+    /// Ob gerade ein Sheet die untere Bildschirmhälfte verdeckt (Such-,
+    /// "+"- oder Detail-Sheet jeweils im `.medium`-Detent). Bei `.large`
+    /// oder ganz ohne Sheet ist die Karte voll sichtbar.
+    private var isHalfPageSheetActive: Bool {
+        if viewModel.isSearchSheetPresented, searchSheetDetent == .medium { return true }
+        if viewModel.isShowingAddRestaurant, addRestaurantSheetDetent == .medium { return true }
+        if viewModel.selectedRestaurant != nil, viewModel.detailSheetDetent == .medium { return true }
+        return false
+    }
+
+    /// Verschiebt das Zentrum einer Region nach Süden, wenn ein Sheet die
+    /// untere Hälfte verdeckt - sonst würde der Zielpunkt in der Bildschirm-
+    /// mitte landen, also genau unter/am Rand des Sheets statt in der Mitte
+    /// des tatsächlich sichtbaren (oberen) Kartenbereichs.
+    private func centerRegion(_ region: MKCoordinateRegion) -> MKCoordinateRegion {
+        guard isHalfPageSheetActive else { return region }
+        var adjusted = region
+        adjusted.center.latitude -= region.span.latitudeDelta * 0.25
+        return adjusted
     }
 
     private func tintColor(for kind: MapPin.Kind) -> Color {

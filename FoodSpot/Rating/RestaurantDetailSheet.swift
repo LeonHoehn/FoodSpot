@@ -135,7 +135,6 @@ struct RestaurantDetailSheet: View {
             }
             .task { await viewModel.load() }
         }
-        .presentationDetents([.medium, .large])
         .sheet(isPresented: $isShowingRatingForm) {
             RatingFormView(restaurant: restaurant, initialDishName: prefillDishName, initialDishId: prefillDishId)
                 .onDisappear { Task { await viewModel.load() } }
