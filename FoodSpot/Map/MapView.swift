@@ -57,7 +57,6 @@ struct MapView: View {
             Task { await viewModel.loadPins() }
         }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
-                .presentationDetents([.medium, .large], selection: $viewModel.detailSheetDetent)
         }
         .sheet(isPresented: $viewModel.isShowingAddRestaurant, onDismiss: {
             viewModel.restaurantSearchResults = []
@@ -110,7 +109,6 @@ struct MapView: View {
         guard let newValue else { return }
 
         if let pinID = newValue.value {
-            viewModel.detailSheetDetent = .medium
             viewModel.selectedRestaurant = viewModel.restaurantSummary(for: pinID)
             return
         }
@@ -129,7 +127,6 @@ struct MapView: View {
                 let request = MKMapItemRequest(feature: feature)
                 let mapItem = try await request.mapItem
                 if let restaurant = await viewModel.resolveRestaurant(from: mapItem) {
-                    viewModel.detailSheetDetent = .medium
                     viewModel.selectedRestaurant = restaurant
                 } else {
                     viewModel.selection = nil
@@ -147,7 +144,6 @@ struct MapView: View {
     private func handleAddedRestaurant(_ mapItem: MKMapItem) async {
         guard let restaurant = await viewModel.resolveRestaurant(from: mapItem) else { return }
         viewModel.focusedRestaurant = restaurant
-        viewModel.detailSheetDetent = .medium
         viewModel.selection = MapSelection(restaurant.id)
         viewModel.selectedRestaurant = restaurant
         withAnimation {
@@ -198,11 +194,15 @@ struct MapView: View {
 
     /// Ob gerade ein Sheet die untere Bildschirmhälfte verdeckt (Such-,
     /// "+"- oder Detail-Sheet jeweils im `.medium`-Detent). Bei `.large`
-    /// oder ganz ohne Sheet ist die Karte voll sichtbar.
+    /// oder ganz ohne Sheet ist die Karte voll sichtbar. Das Detail-Sheet
+    /// hat keinen eigenen Detent-Tracking-Binding (das brach das direkte
+    /// Öffnen auf `.medium`), daher wird hier einfach angenommen, dass es
+    /// beim Öffnen immer bei `.medium` startet - was für die Kamera-
+    /// Zentrierung in genau diesem Moment auch der relevante Fall ist.
     private var isHalfPageSheetActive: Bool {
         if viewModel.isSearchSheetPresented, searchSheetDetent == .medium { return true }
         if viewModel.isShowingAddRestaurant, addRestaurantSheetDetent == .medium { return true }
-        if viewModel.selectedRestaurant != nil, viewModel.detailSheetDetent == .medium { return true }
+        if viewModel.selectedRestaurant != nil { return true }
         return false
     }
 

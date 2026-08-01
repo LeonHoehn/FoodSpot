@@ -62,7 +62,6 @@ struct SearchResultsSheet: View {
     /// Derselbe Selection-State wie beim Karten-Tap - dieselbe
     /// Pin-Hervorhebung, dieselbe Detailseite, kein separater Code-Pfad.
     private func selectResult(_ result: DishSearchResult) {
-        viewModel.detailSheetDetent = .medium
         viewModel.selection = MapSelection(result.restaurantId)
         viewModel.selectedRestaurant = result.summary
     }

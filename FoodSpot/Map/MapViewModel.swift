@@ -22,11 +22,6 @@ final class MapViewModel: ObservableObject {
     /// Pin-Hervorhebung und dieselbe Detailseite.
     @Published var selection: MapSelection<MapPin.ID>?
     @Published var selectedRestaurant: RestaurantSummary?
-    /// Detent der RestaurantDetailSheet - wird von jedem Auswahl-Pfad (Karten-
-    /// Tap, Such-Tap, "+"-Suche) auf `.medium` zurückgesetzt, damit die
-    /// Kamera-Zentrierung zuverlässig weiß, ob die Karte gerade halb verdeckt
-    /// ist.
-    @Published var detailSheetDetent: PresentationDetent = .medium
     /// Restaurant, das gerade per "+"-Suche angelegt/ausgewählt wurde und
     /// deshalb (noch) nicht zwingend in `restaurants` auftaucht - wird
     /// trotzdem als Pin angezeigt, damit die Auswahl-Hervorhebung sichtbar
