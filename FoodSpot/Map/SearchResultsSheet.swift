@@ -61,9 +61,11 @@ struct SearchResultsSheet: View {
 
     /// Derselbe Selection-State wie beim Karten-Tap - dieselbe
     /// Pin-Hervorhebung, dieselbe Detailseite, kein separater Code-Pfad.
+    /// Das Such-Sheet muss dafür aber erst zu sein (siehe MapView), sonst
+    /// versucht MapView zwei Sheets gleichzeitig zu präsentieren.
     private func selectResult(_ result: DishSearchResult) {
-        viewModel.selection = MapSelection(result.restaurantId)
-        viewModel.selectedRestaurant = result.summary
+        viewModel.pendingSearchSelection = (result.restaurantId, result.summary)
+        viewModel.isSearchSheetPresented = false
     }
 
     private var searchField: some View {

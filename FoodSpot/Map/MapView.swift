@@ -84,7 +84,14 @@ struct MapView: View {
                     : AnyShapeStyle(Color(.systemGroupedBackground))
             )
         }
-        .sheet(isPresented: $viewModel.isSearchSheetPresented) {
+        .sheet(isPresented: $viewModel.isSearchSheetPresented, onDismiss: {
+            if let pending = viewModel.pendingSearchSelection {
+                viewModel.pendingSearchSelection = nil
+                viewModel.focusedRestaurant = pending.summary
+                viewModel.selection = MapSelection(pending.restaurantId)
+                viewModel.selectedRestaurant = pending.summary
+            }
+        }) {
             SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
                 .presentationDetents([.medium, .large], selection: $searchSheetDetent)
                 .presentationDragIndicator(.visible)

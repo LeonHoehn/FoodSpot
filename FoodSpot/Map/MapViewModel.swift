@@ -27,6 +27,11 @@ final class MapViewModel: ObservableObject {
     /// trotzdem als Pin angezeigt, damit die Auswahl-Hervorhebung sichtbar
     /// "aufpoppt", genau wie bei einem normalen Karten-Tap.
     @Published var focusedRestaurant: RestaurantSummary?
+    /// Auswahl aus der Such-Liste, die erst NACH vollständigem Schließen
+    /// des Such-Sheets angewendet wird (siehe MapView) - zwei Sheets
+    /// gleichzeitig zu präsentieren kann SwiftUI stillschweigend ignorieren,
+    /// da MapView schon ein Sheet (das Such-Sheet) aktiv präsentiert.
+    var pendingSearchSelection: (restaurantId: UUID, summary: RestaurantSummary)?
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
     @Published private(set) var isResolvingMapFeature = false
