@@ -5,13 +5,11 @@ struct MapView: View {
     @ObservedObject var viewModel: MapViewModel
     @ObservedObject var locationManager: LocationManager
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
-    @State private var selection: MapSelection<MapPin.ID>?
-    @State private var selectedRestaurant: RestaurantSummary?
     @State private var pendingMapItem: MKMapItem?
     @State private var searchSheetDetent: PresentationDetent = .medium
 
     var body: some View {
-        Map(position: $cameraPosition, selection: $selection) {
+        Map(position: $cameraPosition, selection: $viewModel.selection) {
             UserAnnotation()
 
             ForEach(viewModel.displayedPins) { pin in
@@ -42,11 +40,11 @@ struct MapView: View {
                     .padding(.bottom, 8)
             }
         }
-        .onChange(of: selection) { _, newValue in
+        .onChange(of: viewModel.selection) { _, newValue in
             handleSelection(newValue)
         }
-        .sheet(item: $selectedRestaurant, onDismiss: {
-            selection = nil
+        .sheet(item: $viewModel.selectedRestaurant, onDismiss: {
+            viewModel.selection = nil
             Task { await viewModel.loadPins() }
         }) { restaurant in
             RestaurantDetailSheet(restaurant: restaurant)
@@ -90,7 +88,7 @@ struct MapView: View {
         guard let newValue else { return }
 
         if let pinID = newValue.value {
-            selectedRestaurant = viewModel.restaurantSummary(for: pinID)
+            viewModel.selectedRestaurant = viewModel.restaurantSummary(for: pinID)
             return
         }
 
@@ -99,7 +97,7 @@ struct MapView: View {
             let category = feature.pointOfInterestCategory,
             MKPointOfInterestCategory.foodAndDrink.contains(category)
         else {
-            selection = nil
+            viewModel.selection = nil
             return
         }
 
@@ -108,13 +106,13 @@ struct MapView: View {
                 let request = MKMapItemRequest(feature: feature)
                 let mapItem = try await request.mapItem
                 if let restaurant = await viewModel.resolveRestaurant(from: mapItem) {
-                    selectedRestaurant = restaurant
+                    viewModel.selectedRestaurant = restaurant
                 } else {
-                    selection = nil
+                    viewModel.selection = nil
                 }
             } catch {
                 viewModel.errorMessage = error.localizedDescription
-                selection = nil
+                viewModel.selection = nil
             }
         }
     }
@@ -133,7 +131,8 @@ struct MapView: View {
                 )
             )
         }
-        selectedRestaurant = restaurant
+        viewModel.selection = MapSelection(restaurant.id)
+        viewModel.selectedRestaurant = restaurant
     }
 
     private func tintColor(for kind: MapPin.Kind) -> Color {

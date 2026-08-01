@@ -1,6 +1,7 @@
 import CoreLocation
 import Foundation
 import MapKit
+import SwiftUI
 
 @MainActor
 final class MapViewModel: ObservableObject {
@@ -12,6 +13,12 @@ final class MapViewModel: ObservableObject {
     @Published var radiusKm: Double = 5
     @Published var isSearchSheetPresented = false
     @Published var isShowingAddRestaurant = false
+    /// Einziger Ort, an dem "welches Restaurant ist gerade ausgewählt"
+    /// gepflegt wird - egal ob per Karten-Tap, Suchergebnis-Tap oder
+    /// "+"-Suche gesetzt, immer derselbe State -> immer dieselbe
+    /// Pin-Hervorhebung und dieselbe Detailseite.
+    @Published var selection: MapSelection<MapPin.ID>?
+    @Published var selectedRestaurant: RestaurantSummary?
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
     @Published private(set) var isResolvingMapFeature = false

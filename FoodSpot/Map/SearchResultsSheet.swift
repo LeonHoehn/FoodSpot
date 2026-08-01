@@ -1,9 +1,9 @@
+import MapKit
 import SwiftUI
 
 struct SearchResultsSheet: View {
     @ObservedObject var viewModel: MapViewModel
     @ObservedObject var locationManager: LocationManager
-    @State private var selectedRestaurant: RestaurantSummary?
 
     private static let radiusOptions: [Double] = [1, 2, 5, 10, 25, 50, 100]
 
@@ -50,9 +50,6 @@ struct SearchResultsSheet: View {
         .task {
             performSearch()
         }
-        .sheet(item: $selectedRestaurant) { restaurant in
-            RestaurantDetailSheet(restaurant: restaurant)
-        }
     }
 
     private func performSearch() {
@@ -60,6 +57,13 @@ struct SearchResultsSheet: View {
             near: locationManager.currentLocation,
             isAuthorizationDenied: locationManager.isAuthorizationDenied
         )
+    }
+
+    /// Derselbe Selection-State wie beim Karten-Tap - dieselbe
+    /// Pin-Hervorhebung, dieselbe Detailseite, kein separater Code-Pfad.
+    private func selectResult(_ result: DishSearchResult) {
+        viewModel.selection = MapSelection(result.restaurantId)
+        viewModel.selectedRestaurant = result.summary
     }
 
     private var searchField: some View {
@@ -130,7 +134,7 @@ struct SearchResultsSheet: View {
         } else {
             ForEach(viewModel.searchResults) { result in
                 Button {
-                    selectedRestaurant = result.summary
+                    selectResult(result)
                 } label: {
                     resultRow(result)
                 }
