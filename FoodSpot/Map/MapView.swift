@@ -8,6 +8,10 @@ struct MapView: View {
     @State private var pendingMapItem: MKMapItem?
     @State private var searchSheetDetent: PresentationDetent = .medium
     @State private var addRestaurantSheetDetent: PresentationDetent = .medium
+    /// `.sheet(item:)`s onDismiss-Callback bekommt keinen Parameter mehr,
+    /// welches Sheet gerade geschlossen wurde - deshalb hier separat
+    /// mitgeführt (aktualisiert via onChange, bevor activeSheet nil wird).
+    @State private var lastDismissedSheet: MapSheet?
 
     var body: some View {
         Map(position: $cameraPosition, selection: $viewModel.selection) {
@@ -51,24 +55,37 @@ struct MapView: View {
             guard viewModel.searchScope == .global else { return }
             fitCamera(to: results.map(\.coordinate))
         }
-        .sheet(item: $viewModel.selectedRestaurant, onDismiss: {
-            viewModel.selection = nil
-            viewModel.focusedRestaurant = nil
-            Task { await viewModel.loadPins() }
-        }) { restaurant in
-            RestaurantDetailSheet(restaurant: restaurant)
-        }
-        .sheet(isPresented: $viewModel.isShowingAddRestaurant, onDismiss: {
-            viewModel.restaurantSearchResults = []
-            // Erst NACHDEM dieses Sheet vollständig geschlossen ist das
-            // nächste (RestaurantDetailSheet) öffnen - zwei Sheets
-            // gleichzeitig zu präsentieren/schließen kann die SwiftUI-
-            // Sheet-Verwaltung zum Hängen bringen.
-            if let mapItem = pendingMapItem {
-                pendingMapItem = nil
-                Task { await handleAddedRestaurant(mapItem) }
+        .onChange(of: viewModel.activeSheet) { oldValue, newValue in
+            if newValue == nil, let oldValue {
+                lastDismissedSheet = oldValue
             }
-        }) {
+        }
+        .sheet(item: $viewModel.activeSheet, onDismiss: {
+            handleSheetDismiss()
+        }) { sheet in
+            sheetContent(for: sheet)
+        }
+        .task {
+            locationManager.requestAuthorization()
+            locationManager.requestLocation()
+            await viewModel.loadPins()
+        }
+    }
+
+    @ViewBuilder
+    private func sheetContent(for sheet: MapSheet) -> some View {
+        switch sheet {
+        case .search:
+            SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
+                .presentationDetents([.medium, .large], selection: $searchSheetDetent)
+                .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                .presentationBackground(
+                    searchSheetDetent == .medium
+                        ? AnyShapeStyle(Material.ultraThinMaterial)
+                        : AnyShapeStyle(Color(.systemGroupedBackground))
+                )
+        case .addRestaurant:
             AddRestaurantSearchView(locationManager: locationManager) { mapItem in
                 pendingMapItem = mapItem
             } onResultsChanged: { items in
@@ -80,32 +97,41 @@ struct MapView: View {
             .presentationBackgroundInteraction(.enabled(upThrough: .medium))
             .presentationBackground(
                 addRestaurantSheetDetent == .medium
-                    ? AnyShapeStyle(Material.ultraThinMaterial.opacity(0.7))
+                    ? AnyShapeStyle(Material.ultraThinMaterial)
                     : AnyShapeStyle(Color(.systemGroupedBackground))
             )
+        case .detail(let restaurant):
+            RestaurantDetailSheet(restaurant: restaurant)
         }
-        .sheet(isPresented: $viewModel.isSearchSheetPresented, onDismiss: {
+    }
+
+    /// Wird aufgerufen, NACHDEM das gerade präsentierte Sheet vollständig
+    /// geschlossen ist. Da alle drei Sheets denselben `.sheet(item:)`
+    /// teilen, kann hier - im Gegensatz zu vorher mit drei separaten
+    /// Sheets - gefahrlos direkt das nächste Sheet ausgelöst werden (z. B.
+    /// Detailseite nach "+"-Suche): SwiftUI verwaltet immer nur eines.
+    private func handleSheetDismiss() {
+        guard let dismissed = lastDismissedSheet else { return }
+        lastDismissedSheet = nil
+
+        switch dismissed {
+        case .search:
             if let pending = viewModel.pendingSearchSelection {
                 viewModel.pendingSearchSelection = nil
                 viewModel.focusedRestaurant = pending.summary
                 viewModel.selection = MapSelection(pending.restaurantId)
                 viewModel.selectedRestaurant = pending.summary
             }
-        }) {
-            SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
-                .presentationDetents([.medium, .large], selection: $searchSheetDetent)
-                .presentationDragIndicator(.visible)
-                .presentationBackgroundInteraction(.enabled(upThrough: .medium))
-                .presentationBackground(
-                    searchSheetDetent == .medium
-                        ? AnyShapeStyle(Material.ultraThinMaterial.opacity(0.7))
-                        : AnyShapeStyle(Color(.systemGroupedBackground))
-                )
-        }
-        .task {
-            locationManager.requestAuthorization()
-            locationManager.requestLocation()
-            await viewModel.loadPins()
+        case .addRestaurant:
+            viewModel.restaurantSearchResults = []
+            if let mapItem = pendingMapItem {
+                pendingMapItem = nil
+                Task { await handleAddedRestaurant(mapItem) }
+            }
+        case .detail:
+            viewModel.selection = nil
+            viewModel.focusedRestaurant = nil
+            Task { await viewModel.loadPins() }
         }
     }
 

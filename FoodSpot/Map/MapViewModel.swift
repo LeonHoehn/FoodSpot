@@ -3,6 +3,29 @@ import Foundation
 import MapKit
 import SwiftUI
 
+/// MapView präsentierte früher drei gleichrangige, separate `.sheet`-
+/// Modifier (Such-, "+"- und Detail-Sheet) auf derselben View. Wurde eines
+/// gesetzt während ein anderes noch offen war, hat SwiftUI die zweite
+/// Präsentation stillschweigend ignoriert - die Detailseite kam dann nie,
+/// obwohl der State korrekt gesetzt war. Ein einzelner `.sheet(item:)` auf
+/// diesem Enum ist die einzige zuverlässige Lösung, da SwiftUI dann nie
+/// zwei Sheets gleichzeitig verwalten muss.
+enum MapSheet: Identifiable, Equatable {
+    case search
+    case addRestaurant
+    case detail(RestaurantSummary)
+
+    var id: String {
+        switch self {
+        case .search: "search"
+        case .addRestaurant: "addRestaurant"
+        case .detail(let restaurant): "detail-\(restaurant.id.uuidString)"
+        }
+    }
+
+    static func == (lhs: MapSheet, rhs: MapSheet) -> Bool { lhs.id == rhs.id }
+}
+
 @MainActor
 final class MapViewModel: ObservableObject {
     @Published private(set) var restaurants: [Restaurant] = []
@@ -14,23 +37,53 @@ final class MapViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var searchScope: SearchScope = .nearby
     @Published var radiusKm: Double = 5
-    @Published var isSearchSheetPresented = false
-    @Published var isShowingAddRestaurant = false
+    /// Einziges Sheet, das MapView gerade präsentiert (siehe MapSheet).
+    @Published var activeSheet: MapSheet?
+    var isSearchSheetPresented: Bool {
+        get { activeSheet == .search }
+        set {
+            if newValue {
+                activeSheet = .search
+            } else if activeSheet == .search {
+                activeSheet = nil
+            }
+        }
+    }
+    var isShowingAddRestaurant: Bool {
+        get { activeSheet == .addRestaurant }
+        set {
+            if newValue {
+                activeSheet = .addRestaurant
+            } else if activeSheet == .addRestaurant {
+                activeSheet = nil
+            }
+        }
+    }
     /// Einziger Ort, an dem "welches Restaurant ist gerade ausgewählt"
     /// gepflegt wird - egal ob per Karten-Tap, Suchergebnis-Tap oder
     /// "+"-Suche gesetzt, immer derselbe State -> immer dieselbe
     /// Pin-Hervorhebung und dieselbe Detailseite.
     @Published var selection: MapSelection<MapPin.ID>?
-    @Published var selectedRestaurant: RestaurantSummary?
+    var selectedRestaurant: RestaurantSummary? {
+        get {
+            if case .detail(let restaurant) = activeSheet { return restaurant }
+            return nil
+        }
+        set {
+            if let newValue {
+                activeSheet = .detail(newValue)
+            } else if case .detail = activeSheet {
+                activeSheet = nil
+            }
+        }
+    }
     /// Restaurant, das gerade per "+"-Suche angelegt/ausgewählt wurde und
     /// deshalb (noch) nicht zwingend in `restaurants` auftaucht - wird
     /// trotzdem als Pin angezeigt, damit die Auswahl-Hervorhebung sichtbar
     /// "aufpoppt", genau wie bei einem normalen Karten-Tap.
     @Published var focusedRestaurant: RestaurantSummary?
     /// Auswahl aus der Such-Liste, die erst NACH vollständigem Schließen
-    /// des Such-Sheets angewendet wird (siehe MapView) - zwei Sheets
-    /// gleichzeitig zu präsentieren kann SwiftUI stillschweigend ignorieren,
-    /// da MapView schon ein Sheet (das Such-Sheet) aktiv präsentiert.
+    /// des Such-Sheets angewendet wird (siehe MapView).
     var pendingSearchSelection: (restaurantId: UUID, summary: RestaurantSummary)?
     @Published private(set) var isLoading = false
     @Published private(set) var isSearching = false
