@@ -79,6 +79,15 @@ final class AuthViewModel: ObservableObject {
     /// Supabase-Dashboard unter Authentication aktiviert sein.
     func signInAsDebugUser() async {
         errorMessage = nil
+
+        // Falls bereits eine gültige (persistierte) Session existiert, diese
+        // wiederverwenden statt eine neue anonyme User-ID zu erzeugen - sonst
+        // "verliert" man bei jedem erneuten Tap Zugriff auf zuvor unter der
+        // alten User-ID gespeicherte Bewertungen.
+        if let session = try? await client.auth.session, !session.isExpired {
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 
