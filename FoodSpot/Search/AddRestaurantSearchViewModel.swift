@@ -5,9 +5,14 @@ import MapKit
 @MainActor
 final class AddRestaurantSearchViewModel: ObservableObject {
     @Published var query = ""
-    @Published private(set) var results: [MKMapItem] = []
+    @Published private(set) var results: [MKMapItem] = [] {
+        didSet { resultsUpdateCount += 1 }
+    }
     @Published private(set) var isSearching = false
     @Published var errorMessage: String?
+    /// MKMapItem ist nicht Equatable, daher zählt dieser Wert Updates hoch,
+    /// damit SwiftUI-`onChange` auf neue Ergebnisse reagieren kann.
+    @Published private(set) var resultsUpdateCount = 0
 
     private let searchService = RestaurantSearchService()
     private var searchTask: Task<Void, Never>?

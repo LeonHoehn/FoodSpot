@@ -7,6 +7,7 @@ struct MapView: View {
     @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var pendingMapItem: MKMapItem?
     @State private var searchSheetDetent: PresentationDetent = .medium
+    @State private var addRestaurantSheetDetent: PresentationDetent = .medium
 
     var body: some View {
         Map(position: $cameraPosition, selection: $viewModel.selection) {
@@ -43,6 +44,9 @@ struct MapView: View {
         .onChange(of: viewModel.selection) { _, newValue in
             handleSelection(newValue)
         }
+        .onChange(of: viewModel.searchResults) { _, results in
+            fitCamera(to: results.map(\.coordinate))
+        }
         .sheet(item: $viewModel.selectedRestaurant, onDismiss: {
             viewModel.selection = nil
             Task { await viewModel.loadPins() }
@@ -50,6 +54,7 @@ struct MapView: View {
             RestaurantDetailSheet(restaurant: restaurant)
         }
         .sheet(isPresented: $viewModel.isShowingAddRestaurant, onDismiss: {
+            viewModel.restaurantSearchResults = []
             // Erst NACHDEM dieses Sheet vollständig geschlossen ist das
             // nächste (RestaurantDetailSheet) öffnen - zwei Sheets
             // gleichzeitig zu präsentieren/schließen kann die SwiftUI-
@@ -61,7 +66,18 @@ struct MapView: View {
         }) {
             AddRestaurantSearchView(locationManager: locationManager) { mapItem in
                 pendingMapItem = mapItem
+            } onResultsChanged: { items in
+                viewModel.restaurantSearchResults = items
+                fitCamera(to: items.map(\.placemark.coordinate))
             }
+            .presentationDetents([.medium, .large], selection: $addRestaurantSheetDetent)
+            .presentationDragIndicator(.visible)
+            .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+            .presentationBackground(
+                addRestaurantSheetDetent == .medium
+                    ? AnyShapeStyle(Material.ultraThinMaterial.opacity(0.7))
+                    : AnyShapeStyle(Color(.systemGroupedBackground))
+            )
         }
         .sheet(isPresented: $viewModel.isSearchSheetPresented) {
             SearchResultsSheet(viewModel: viewModel, locationManager: locationManager)
@@ -133,6 +149,39 @@ struct MapView: View {
         }
         viewModel.selection = MapSelection(restaurant.id)
         viewModel.selectedRestaurant = restaurant
+    }
+
+    /// Zoomt/fliegt so, dass alle übergebenen Koordinaten sichtbar sind
+    /// (mit etwas Rand). Wird für Such- und Restaurant-Suchergebnisse
+    /// gleichermaßen verwendet.
+    private func fitCamera(to coordinates: [CLLocationCoordinate2D]) {
+        guard !coordinates.isEmpty else { return }
+
+        if coordinates.count == 1, let only = coordinates.first {
+            withAnimation {
+                cameraPosition = .region(
+                    MKCoordinateRegion(center: only, latitudinalMeters: 800, longitudinalMeters: 800)
+                )
+            }
+            return
+        }
+
+        let lats = coordinates.map(\.latitude)
+        let lngs = coordinates.map(\.longitude)
+        guard
+            let minLat = lats.min(), let maxLat = lats.max(),
+            let minLng = lngs.min(), let maxLng = lngs.max()
+        else { return }
+
+        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLng + maxLng) / 2)
+        let span = MKCoordinateSpan(
+            latitudeDelta: max((maxLat - minLat) * 1.5, 0.02),
+            longitudeDelta: max((maxLng - minLng) * 1.5, 0.02)
+        )
+
+        withAnimation {
+            cameraPosition = .region(MKCoordinateRegion(center: center, span: span))
+        }
     }
 
     private func tintColor(for kind: MapPin.Kind) -> Color {

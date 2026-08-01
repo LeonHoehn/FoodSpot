@@ -5,6 +5,7 @@ import SwiftUI
 struct AddRestaurantSearchView: View {
     @ObservedObject var locationManager: LocationManager
     let onSelect: (MKMapItem) -> Void
+    var onResultsChanged: ([MKMapItem]) -> Void = { _ in }
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = AddRestaurantSearchViewModel()
@@ -55,6 +56,9 @@ struct AddRestaurantSearchView: View {
             }
             .onChange(of: locationManager.locationUpdateCount) {
                 performSearch()
+            }
+            .onChange(of: viewModel.resultsUpdateCount) {
+                onResultsChanged(viewModel.results)
             }
             .navigationTitle("Restaurant finden")
             .navigationBarTitleDisplayMode(.inline)

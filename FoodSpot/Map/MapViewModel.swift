@@ -8,6 +8,9 @@ final class MapViewModel: ObservableObject {
     @Published private(set) var restaurants: [Restaurant] = []
     @Published private(set) var bookmarks: [BookmarkedRestaurant] = []
     @Published private(set) var searchResults: [DishSearchResult] = []
+    /// Live-Treffer aus der "+"-Restaurantsuche, nur fürs Anzeigen als
+    /// Pins auf der Karte (rein visuell, nicht Teil des Selection-States).
+    @Published var restaurantSearchResults: [MKMapItem] = []
     @Published var searchText = ""
     @Published var searchScope: SearchScope = .nearby
     @Published var radiusKm: Double = 5
@@ -36,6 +39,12 @@ final class MapViewModel: ObservableObject {
     /// Öffentliche "hat Bewertungen"-Pins + private, nur für den eigenen
     /// Nutzer sichtbare Merkliste-Pins (dedupliziert, falls beides zutrifft).
     var displayedPins: [MapPin] {
+        if isShowingAddRestaurant, !restaurantSearchResults.isEmpty {
+            return restaurantSearchResults.map { item in
+                MapPin(id: UUID(), name: item.name ?? "Unbekanntes Restaurant", coordinate: item.placemark.coordinate, kind: .searchResult)
+            }
+        }
+
         if isSearchSheetPresented {
             return searchResults.map(\.asMapPin)
         }
