@@ -86,6 +86,13 @@ struct MapView: View {
                         : AnyShapeStyle(Color(.systemGroupedBackground))
                 )
         case .addRestaurant:
+            // Kein presentationBackgroundInteraction/Material hier: die
+            // Karte live+interaktiv unter einem durchscheinenden Sheet
+            // weiterzurendern, während gleichzeitig die Tastatur für die
+            // Texteingabe aktiv ist, hat zu spürbarem Ruckeln beim Tippen
+            // geführt. Ein einfacher, undurchsichtiger Hintergrund reicht
+            // hier - Live-Kartenblick durchs Sheet ist bei der Restaurant-
+            // Suche kein Kernbedürfnis wie bei der Gericht-Suche.
             AddRestaurantSearchView(locationManager: locationManager) { mapItem in
                 pendingMapItem = mapItem
             } onResultsChanged: { items in
@@ -94,12 +101,6 @@ struct MapView: View {
             }
             .presentationDetents([.medium, .large], selection: $addRestaurantSheetDetent)
             .presentationDragIndicator(.visible)
-            .presentationBackgroundInteraction(.enabled(upThrough: .medium))
-            .presentationBackground(
-                addRestaurantSheetDetent == .medium
-                    ? AnyShapeStyle(Material.ultraThinMaterial)
-                    : AnyShapeStyle(Color(.systemGroupedBackground))
-            )
         case .detail(let restaurant):
             RestaurantDetailSheet(restaurant: restaurant)
         }
@@ -142,6 +143,14 @@ struct MapView: View {
         guard let newValue else { return }
 
         if let pinID = newValue.value {
+            // Falls selectedRestaurant für diese ID schon gesetzt ist (z. B.
+            // durch die "+"-Suche oder einen Suchergebnis-Tap, die selection
+            // ebenfalls programmatisch setzen), NICHT überschreiben: ein neu
+            // angelegtes, noch unbewertetes Restaurant steht in keiner der
+            // Listen, die restaurantSummary(for:) durchsucht, und würde hier
+            // sonst fälschlich auf nil zurückfallen und das gerade geöffnete
+            // Sheet sofort wieder schließen.
+            guard viewModel.selectedRestaurant?.id != pinID else { return }
             viewModel.selectedRestaurant = viewModel.restaurantSummary(for: pinID)
             return
         }
